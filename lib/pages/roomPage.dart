@@ -82,16 +82,20 @@ class RoomPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: CustomScrollView(
+        physics: const BouncingScrollPhysics(),
         slivers: [
           const SliverAppBar(
             pinned: true,
             expandedHeight: 250.0,
             flexibleSpace: FlexibleSpaceBar(
-              title: Text('Wayanad'),
+              title: Text('Rooms in Wayanad'),
             ),
           ),
           SliverList(
               delegate: SliverChildListDelegate(const [
+            RoomItem(),
+            RoomItem(),
+            RoomItem(),
             RoomItem(),
             RoomItem(),
           ]))
@@ -112,11 +116,11 @@ class RoomItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 30),
       child: Row(
         children: [
           SizedBox.square(
-            dimension: 120,
+            dimension: 130,
             child: ClipRRect(
               borderRadius: const BorderRadius.all(Radius.circular(10)),
               child: Image.network(
@@ -132,27 +136,51 @@ class RoomItem extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'location',
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
-                        // Spacer(),
-                        Text('Resort Name',
-                            style: Theme.of(context).textTheme.headline1),
-                      ],
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'location',
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                          // Spacer(),
+                          Text('Resort Name',
+                              style: Theme.of(context).textTheme.headline6),
+                        ],
+                      ),
                     ),
-                    Icon(
-                      Icons.favorite_outline,
-                      color: Colors.pink,
-                    ),
+                    IconButton(
+                      icon: const Icon(
+                        Icons.favorite_outline,
+                        color: Colors.pink,
+                      ),
+                      onPressed: () => {},
+                    )
                   ],
+                ),
+                SizedBox(
+                  height: 30,
+                  child: ListView(
+                    scrollDirection: Axis.horizontal,
+                    children: List.generate(
+                        5,
+                        (index) => const SizedBox(
+                              width: 30,
+                              child: Card(
+                                elevation: 6,
+                                child: Icon(
+                                  size: 16,
+                                  Icons.accessible_forward_sharp,
+                                  color: Colors.amber,
+                                ),
+                              ),
+                            )),
+                  ),
                 ),
                 const Divider(),
                 Text(
-                  "4-6 guests . Entire Home . 5 beds . 3 bath Wifi . Kitchen . Free Parking",
+                  "4-6 guests . Entire Home . 5 beds  . Wifi . Kitchen . 3 bathroom . Free Parking",
                   overflow: TextOverflow.ellipsis,
                   maxLines: 2,
                   style: Theme.of(context).textTheme.bodySmall,
@@ -161,7 +189,7 @@ class RoomItem extends StatelessWidget {
                 Row(
                   children: [
                     const Icon(
-                      Icons.star_outline,
+                      Icons.star,
                       color: Colors.amber,
                     ),
                     Text(
@@ -169,8 +197,10 @@ class RoomItem extends StatelessWidget {
                       style: Theme.of(context).textTheme.bodySmall,
                     ),
                     const Spacer(),
-                    const Icon(Icons.monetization_on),
-                    Text("495"),
+                    const Text(
+                      "\$495",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
                     Text(
                       "/night",
                       style: Theme.of(context).textTheme.bodySmall,

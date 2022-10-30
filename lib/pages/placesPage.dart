@@ -124,7 +124,7 @@ class PlaceItem extends StatelessWidget {
         child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text(title, style: Theme.of(context).textTheme.headline1),
+        Text(title, style: Theme.of(context).textTheme.headline6),
         Text(description, style: Theme.of(context).textTheme.bodyText1),
       ],
     ));
