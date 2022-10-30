@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'placesPage.dart';
 
 class ChooseYourNeed extends StatelessWidget {
   const ChooseYourNeed({super.key});
@@ -10,10 +11,13 @@ class ChooseYourNeed extends StatelessWidget {
       child: Column(children: <Widget>[
         const Padding(
           padding: EdgeInsets.all(20.0),
-          child: Text('What do you want to ?'),
+          child: Text('What do you want ?'),
         ),
         ImagedButton(
-            onPressed: () => {},
+            onPressed: () => {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => const PlacesPage()))
+                },
             text: "Places to visit",
             url: "https://cdn-icons-png.flaticon.com/512/854/854878.png"),
         ImagedButton(

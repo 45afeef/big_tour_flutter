@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Bigooit Tour',
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -24,8 +24,15 @@ class MyApp extends StatelessWidget {
         // Notice that the counter didn't reset back to zero; the application
         // is not restarted.
         primarySwatch: Colors.blue,
+        textTheme: TextTheme(
+            headline1: TextStyle(
+                color: Colors.deepPurple[600],
+                fontSize: 16.0,
+                fontWeight: FontWeight.bold),
+            bodyText1: const TextStyle(
+                color: Colors.black45, fontWeight: FontWeight.normal)),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(title: 'Bigooit Tour'),
     );
   }
 }
@@ -49,19 +56,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -99,9 +93,9 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
+        onPressed: () => {},
+        tooltip: 'Call now',
+        child: const Icon(Icons.call),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
