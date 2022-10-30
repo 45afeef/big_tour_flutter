@@ -1,3 +1,4 @@
+import 'roomPage.dart';
 import 'package:flutter/material.dart';
 import 'placesPage.dart';
 
@@ -21,7 +22,10 @@ class ChooseYourNeed extends StatelessWidget {
             text: "Places to visit",
             url: "https://cdn-icons-png.flaticon.com/512/854/854878.png"),
         ImagedButton(
-            onPressed: () => {},
+            onPressed: () => {
+              Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => const RoomPage()))
+            },
             text: "Rooms to stay",
             url: "https://cdn-icons-png.flaticon.com/512/1069/1069454.png"),
         ImagedButton(

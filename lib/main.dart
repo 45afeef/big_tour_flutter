@@ -31,6 +31,7 @@ class MyApp extends StatelessWidget {
                 fontWeight: FontWeight.bold),
             bodyText1: const TextStyle(
                 color: Colors.black45, fontWeight: FontWeight.normal)),
+              
       ),
       home: const MyHomePage(title: 'Bigooit Tour'),
     );
