@@ -2,74 +2,74 @@ import 'package:flutter/material.dart';
 
 List placeList = [
   {
-    "title": "Iduki1",
-    "description": "super way1",
+    "title": "Pookode Lake",
+    "description": "Place importance with beautiful landscapes and good description",
     "imageSrc":
         "https://images.unsplash.com/photo-1666860570907-bc54931a33f9?q=40&w=576"
   },
   {
-    "title": "Iduki2",
-    "description": "super way2",
+    "title": "Phantom Rock",
+    "description": "Place importance with beautiful landscapes and good description",
     "imageSrc":
         "https://images.unsplash.com/photo-1666973225662-fe02ab2a1dc8?q=40&w=576"
   },
   {
-    "title": "Iduki3",
-    "description": "super way3",
+    "title": "Edacal Caves",
+    "description": "Place importance with beautiful landscapes and good description",
+    "imageSrc":
+        "https://images.unsplash.com/photo-1664575197229-3bbebc281874?q=40&w=576"
+  },
+  {
+    "title": "Kuruva Dweep",
+    "description": "Place importance with beautiful landscapes and good description",
+    "imageSrc":
+        "https://images.unsplash.com/photo-1666860570907-bc54931a33f9?q=40&w=576"
+  },
+  {
+    "title": "Banasura",
+    "description": "Place importance with beautiful landscapes and good description",
+    "imageSrc":
+        "https://images.unsplash.com/photo-1666973225662-fe02ab2a1dc8?q=40&w=576"
+  },
+  {
+    "title": "Chembra peek",
+    "description": "Place importance with beautiful landscapes and good description",
     "imageSrc":
         "https://images.unsplash.com/photo-1664575197229-3bbebc281874?q=40&w=576"
   },
   {
     "title": "Iduki1",
-    "description": "super way1",
+    "description": "Place importance with beautiful landscapes and good description",
     "imageSrc":
         "https://images.unsplash.com/photo-1666860570907-bc54931a33f9?q=40&w=576"
   },
   {
     "title": "Iduki2",
-    "description": "super way2",
+    "description": "Place importance with beautiful landscapes and good description",
     "imageSrc":
         "https://images.unsplash.com/photo-1666973225662-fe02ab2a1dc8?q=40&w=576"
   },
   {
     "title": "Iduki3",
-    "description": "super way3",
+    "description": "Place importance with beautiful landscapes and good description",
     "imageSrc":
         "https://images.unsplash.com/photo-1664575197229-3bbebc281874?q=40&w=576"
   },
   {
     "title": "Iduki1",
-    "description": "super way1",
+    "description": "Place importance with beautiful landscapes and good description",
     "imageSrc":
         "https://images.unsplash.com/photo-1666860570907-bc54931a33f9?q=40&w=576"
   },
   {
     "title": "Iduki2",
-    "description": "super way2",
+    "description": "Place importance with beautiful landscapes and good description",
     "imageSrc":
         "https://images.unsplash.com/photo-1666973225662-fe02ab2a1dc8?q=40&w=576"
   },
   {
     "title": "Iduki3",
-    "description": "super way3",
-    "imageSrc":
-        "https://images.unsplash.com/photo-1664575197229-3bbebc281874?q=40&w=576"
-  },
-  {
-    "title": "Iduki1",
-    "description": "super way1",
-    "imageSrc":
-        "https://images.unsplash.com/photo-1666860570907-bc54931a33f9?q=40&w=576"
-  },
-  {
-    "title": "Iduki2",
-    "description": "super way2",
-    "imageSrc":
-        "https://images.unsplash.com/photo-1666973225662-fe02ab2a1dc8?q=40&w=576"
-  },
-  {
-    "title": "Iduki3",
-    "description": "super way3",
+    "description": "Place importance with beautiful landscapes and good description",
     "imageSrc":
         "https://images.unsplash.com/photo-1664575197229-3bbebc281874?q=40&w=576"
   },
