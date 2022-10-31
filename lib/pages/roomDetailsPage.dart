@@ -1,4 +1,5 @@
 import 'package:big_tour/components/facilities.dart';
+import 'package:big_tour/helpers/urlLancher.dart';
 import 'package:flutter/material.dart';
 
 class RoomDetailsPage extends StatelessWidget {
@@ -29,7 +30,7 @@ class RoomDetailsPage extends StatelessWidget {
                   ],
                 ),
                 ElevatedButton(
-                  onPressed: () => {},
+                  onPressed: () => {makePhoneCall("7558009733")},
                   child: Row(
                     children: const [
                       Icon(Icons.call),
@@ -43,7 +44,7 @@ class RoomDetailsPage extends StatelessWidget {
                     backgroundColor:
                         MaterialStateProperty.all<Color>(Color(0xff00a884)),
                   ),
-                  onPressed: () => {},
+                  onPressed: () => {sendToWhatsApp()},
                   child: Row(
                     children: const [
                       Icon(Icons.send),
@@ -55,32 +56,8 @@ class RoomDetailsPage extends StatelessWidget {
             );
           },
         ),
-        // bottomNavigationBar:
-        //     BottomNavigationBar(backgroundColor: Colors.white, items: [
-        //   BottomNavigationBarItem(
-        //     icon: ElevatedButton(
-        //       onPressed: () => {},
-        //       child: Row(
-        //         children: const [Icon(Icons.call), Text("Call to book now")],
-        //       ),
-        //     ),
-        //     label: 'Home',
-        //   ),
-        //   const BottomNavigationBarItem(
-        //     icon: Icon(Icons.home),
-        //     label: 'Home',
-        //   ),
-        //   const BottomNavigationBarItem(
-        //     icon: Icon(Icons.home),
-        //     label: 'Home',
-        //   ),
-        //   const BottomNavigationBarItem(
-        //     icon: Icon(Icons.home),
-        //     label: 'Home',
-        //   ),
-        // ]),
         body: Padding(
-          padding: const EdgeInsets.all(15.0),
+          padding: const EdgeInsets.fromLTRB(15.0, 15.0, 15.0, 50),
           child: ListView(
             children: [
               Container(
