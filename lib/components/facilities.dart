@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 class Facilities extends StatelessWidget {
@@ -12,13 +14,13 @@ class Facilities extends StatelessWidget {
       child: ListView(
         scrollDirection: Axis.horizontal,
         children: List.generate(
-            5,
+            15,
             (index) => SizedBox(
                   width: size,
-                  child: const Card(
+                  child: Card(
                     elevation: 6,
                     child: Icon(
-                      size: 16,
+                      size: min(size * 16 / 30, 24),
                       Icons.accessible_forward_sharp,
                       color: Colors.amber,
                     ),

@@ -167,8 +167,7 @@ class RoomItem extends StatelessWidget {
                         )
                       ],
                     ),
-                    Facilities(size: 30),
-                    // const SizedBox(height: 30, child: Facilities(size: 30)),
+                    const Facilities(size: 30),
                     const Divider(),
                     Text(
                       "4-6 guests . Entire Home . 5 beds  . Wifi . Kitchen . 3 bathroom . Free Parking",

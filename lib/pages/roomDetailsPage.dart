@@ -7,25 +7,78 @@ class RoomDetailsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        bottomNavigationBar:
-            BottomNavigationBar(items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: 'Home',
-              backgroundColor: Colors.green),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: 'Home',
-              backgroundColor: Colors.green),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: 'Home',
-              backgroundColor: Colors.green),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: 'Home',
-              backgroundColor: Colors.green),
-        ]),
+        bottomSheet: BottomSheet(
+          onClosing: () {
+            //  Do what you wanna do when the bottom sheet closes.
+          },
+          builder: (context) {
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text(
+                      "\$495",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      "/night",
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  ],
+                ),
+                ElevatedButton(
+                  onPressed: () => {},
+                  child: Row(
+                    children: const [
+                      Icon(Icons.call),
+                      Text("Call to book now"),
+                    ],
+                  ),
+                ),
+                ElevatedButton(
+                  // ignore: prefer_const_constructors
+                  style: ButtonStyle(
+                    backgroundColor:
+                        MaterialStateProperty.all<Color>(Color(0xff00a884)),
+                  ),
+                  onPressed: () => {},
+                  child: Row(
+                    children: const [
+                      Icon(Icons.send),
+                      Text("WhatsApp"),
+                    ],
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
+        // bottomNavigationBar:
+        //     BottomNavigationBar(backgroundColor: Colors.white, items: [
+        //   BottomNavigationBarItem(
+        //     icon: ElevatedButton(
+        //       onPressed: () => {},
+        //       child: Row(
+        //         children: const [Icon(Icons.call), Text("Call to book now")],
+        //       ),
+        //     ),
+        //     label: 'Home',
+        //   ),
+        //   const BottomNavigationBarItem(
+        //     icon: Icon(Icons.home),
+        //     label: 'Home',
+        //   ),
+        //   const BottomNavigationBarItem(
+        //     icon: Icon(Icons.home),
+        //     label: 'Home',
+        //   ),
+        //   const BottomNavigationBarItem(
+        //     icon: Icon(Icons.home),
+        //     label: 'Home',
+        //   ),
+        // ]),
         body: Padding(
           padding: const EdgeInsets.all(15.0),
           child: ListView(
