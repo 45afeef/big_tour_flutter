@@ -81,7 +81,7 @@ class PlacesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Places Page")),
+      appBar: AppBar(title: const Text("Places in Wayanad")),
       body: Center(
           child: ListView.separated(
         itemCount: placeList.length,

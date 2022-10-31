@@ -23,9 +23,9 @@ class ChooseYourNeed extends StatelessWidget {
             url: "https://cdn-icons-png.flaticon.com/512/854/854878.png"),
         ImagedButton(
             onPressed: () => {
-              Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => const RoomPage()))
-            },
+                  Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => const RoomPage()))
+                },
             text: "Rooms to stay",
             url: "https://cdn-icons-png.flaticon.com/512/1069/1069454.png"),
         ImagedButton(
