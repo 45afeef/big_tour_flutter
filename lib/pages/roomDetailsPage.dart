@@ -62,34 +62,12 @@ class RoomDetailsPage extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(15.0, 15.0, 15.0, 50),
           child: ListView(
             children: [
-              Container(
-                alignment: Alignment.center,
-                child: Stack(
-                  alignment: AlignmentDirectional.bottomCenter,
-                  clipBehavior: Clip.none,
-                  children: [
-                    ClipRRect(
-                      borderRadius: const BorderRadius.all(Radius.circular(15)),
-                      child: AspectRatio(
-                        aspectRatio: 1,
-                        child: InkWell(
-                          onTap: () => {
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => Gallary()))
-                          },
-                          child: Image.network(
-                            "https://images.unsplash.com/photo-1664575197229-3bbebc281874?q=40&w=576",
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const Positioned(
-                      bottom: -39,
-                      child: ImageList(),
-                    ),
-                  ],
-                ),
+              Gallary(
+                bottomPosition: -39,
+                onTap: () => {
+                  Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => const Gallary()))
+                },
               ),
               const SizedBox(
                 height: 40,
