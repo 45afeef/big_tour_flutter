@@ -100,6 +100,9 @@ class RoomPage extends StatelessWidget {
             RoomItem(),
             RoomItem(),
             RoomItem(),
+            RoomItem(),
+            RoomItem(),
+            RoomItem(),
           ]))
         ],
       ),
@@ -163,7 +166,9 @@ class RoomItem extends StatelessWidget {
                             Icons.favorite_outline,
                             color: Colors.pink,
                           ),
-                          onPressed: () => {},
+                          onPressed: () => {
+                            
+                          },
                         )
                       ],
                     ),
