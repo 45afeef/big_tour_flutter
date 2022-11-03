@@ -4,6 +4,15 @@ import 'package:big_tour/helpers/urlLancher.dart';
 import 'package:big_tour/pages/gallary.dart';
 import 'package:flutter/material.dart';
 
+const List<String> images = [
+  "https://images.unsplash.com/photo-1545239351-1141bd82e8a6?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=481&q=80",
+  "https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
+  "https://images.unsplash.com/photo-1666969295767-4db7ff1f8fec?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1332&q=80",
+  "https://images.unsplash.com/photo-1666730501852-189f6139d518?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1964&q=80",
+  "https://images.unsplash.com/photo-1666974316102-12699b826038?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=464&q=80",
+  "https://images.unsplash.com/photo-1667159590059-ef149c08a5fd?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1332&q=80"
+];
+
 class RoomDetailsPage extends StatelessWidget {
   const RoomDetailsPage({super.key});
 
@@ -63,10 +72,11 @@ class RoomDetailsPage extends StatelessWidget {
           child: ListView(
             children: [
               Gallary(
+                images,
                 bottomPosition: -39,
                 onTap: () => {
-                  Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => const Gallary()))
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => const Gallary(images)))
                 },
               ),
               const SizedBox(

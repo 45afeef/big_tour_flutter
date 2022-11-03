@@ -1,15 +1,29 @@
 import 'package:big_tour/components/imageList.dart';
 import "package:flutter/material.dart";
 
-class Gallary extends StatelessWidget {
-  const Gallary({
+class Gallary extends StatefulWidget {
+  const Gallary(
+    this.images, {
     this.bottomPosition = 0,
     this.onTap,
     super.key,
   });
 
+  final List<String> images;
   final double bottomPosition;
   final Function()? onTap;
+
+  @override
+  State<Gallary> createState() => _GallaryState();
+}
+
+class _GallaryState extends State<Gallary> {
+  String currentImage = "";
+  @override
+  initState() {
+    super.initState();
+    currentImage = widget.images.first;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,17 +36,18 @@ class Gallary extends StatelessWidget {
           child: AspectRatio(
             aspectRatio: 1,
             child: GestureDetector(
-              onTap: onTap,
-              child: Image.network(
-                "https://images.unsplash.com/photo-1664575197229-3bbebc281874?q=40&w=576",
-                fit: BoxFit.cover,
-              ),
+              onTap: widget.onTap,
+              child: Image.network(currentImage, fit: BoxFit.cover),
             ),
           ),
         ),
         Positioned(
-          bottom: bottomPosition,
-          child: const ImageList(),
+          bottom: widget.bottomPosition,
+          child: ImageList(
+            widget.images,
+            onSelect: (selectedIndex) =>
+                {setState(() => currentImage = widget.images[selectedIndex])},
+          ),
         )
       ],
     );
