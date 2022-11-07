@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "827607336219",
+    "project_id": "bigooit-tour",
+    "storage_bucket": "bigooit-tour.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:827607336219:android:1f8f58bc9741eae96fbfbe",
+        "android_client_info": {
+          "package_name": "com.example.big_tour"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "827607336219-tmbqiokt7u6fdkpl6nhaj137u9abptes.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB3efjKILjoA9IBNdemMm6umJbQqndFd4E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "827607336219-tmbqiokt7u6fdkpl6nhaj137u9abptes.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
