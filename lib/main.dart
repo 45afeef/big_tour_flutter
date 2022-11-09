@@ -1,9 +1,17 @@
+import 'package:big_tour/firebase_options.dart';
 import 'package:big_tour/pages/chooseYourNeed.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 import 'helpers/urlLancher.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
   runApp(const MyApp());
 }
 
@@ -60,6 +68,14 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
+    final user = <String, dynamic>{
+      "first": "Ada",
+      "last": "Lovelace",
+      "born": 1815
+    };
+
+    FirebaseFirestore db = FirebaseFirestore.instance;
+
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
     //
@@ -91,7 +107,19 @@ class _MyHomePageState extends State<MyHomePage> {
           // axis because Columns are vertical (the cross axis would be
           // horizontal).
           mainAxisAlignment: MainAxisAlignment.center,
-          children: const [ChooseYourNeed()],
+          children: [
+            const ChooseYourNeed(),
+            TextButton(
+                onPressed: () => {
+                      // Create a new user with a first and last name
+
+                      // Add a new document with a generated ID
+                      db.collection("users").add(user).then((DocumentReference
+                              doc) =>
+                          print('DocumentSnapshot added with ID: ${doc.id}'))
+                    },
+                child: Text("click me"))
+          ],
         ),
       ),
       floatingActionButton: FloatingActionButton(

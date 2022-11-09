@@ -29,6 +29,13 @@
             {
               "client_id": "827607336219-tmbqiokt7u6fdkpl6nhaj137u9abptes.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "827607336219-084bvbe2k797tpdjv1ohlkv1siit7e4h.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.bigTour"
+              }
             }
           ]
         }
