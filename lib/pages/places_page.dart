@@ -1,4 +1,7 @@
+import 'package:big_tour/data/place.dart';
+import 'package:big_tour/providers/place_model.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 List placeList = [
   {
@@ -95,6 +98,37 @@ class PlacesPage extends StatelessWidget {
             const Divider(color: Colors.black26),
         padding: const EdgeInsets.all(10.0),
       )),
+      // TODO: make it dynamic
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => {
+          Provider.of<PlaceModel>(context, listen: false)
+              .save(Place(
+                  name: "Chempra",
+                  description: "description for chempra",
+                  imageUrls: ["No image url"]))
+              .then((docRef) => showDialog(
+                    context: context,
+                    builder: (ctx) => AlertDialog(
+                      title: const Text("Alert Dialog Box"),
+                      content: const Text("You have raised a Alert Dialog Box"),
+                      actions: <Widget>[
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(ctx).pop();
+                          },
+                          child: Container(
+                            color: Colors.green,
+                            padding: const EdgeInsets.all(14),
+                            child: const Text("okay"),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ))
+        },
+        tooltip: 'Call now',
+        child: const Icon(Icons.send),
+      ),
     );
   }
 }

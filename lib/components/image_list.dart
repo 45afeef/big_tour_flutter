@@ -5,7 +5,7 @@ class ImageList extends StatefulWidget {
       : super(key: key);
 
   final List<String> images;
-  final Function(int i) onSelect;
+  final Function(int selectionIndex) onSelect;
 
   @override
   State<ImageList> createState() => _ImageListState();

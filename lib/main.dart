@@ -1,8 +1,10 @@
 import 'package:big_tour/firebase_options.dart';
 import 'package:big_tour/pages/choose_your_need.dart';
+import 'package:big_tour/providers/place_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'helpers/url_lancher.dart';
 
@@ -12,7 +14,14 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => PlaceModel()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -66,6 +75,18 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  @override
+  void initState() {
+    super.initState();
+
+    _loadDataFromServer();
+  }
+
+  _loadDataFromServer() {
+    Provider.of<PlaceModel>(context, listen: false).fetchPlaces();
+    // TODO: start using the data in firestore
+  }
+
   @override
   Widget build(BuildContext context) {
     final user = <String, dynamic>{
