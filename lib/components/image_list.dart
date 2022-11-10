@@ -1,4 +1,3 @@
-import 'package:big_tour/pages/roomDetailsPage.dart';
 import 'package:flutter/material.dart';
 
 class ImageList extends StatefulWidget {

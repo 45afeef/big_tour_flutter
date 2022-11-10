@@ -1,10 +1,10 @@
 import 'package:big_tour/firebase_options.dart';
-import 'package:big_tour/pages/chooseYourNeed.dart';
+import 'package:big_tour/pages/choose_your_need.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
-import 'helpers/urlLancher.dart';
+import 'helpers/url_lancher.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -118,7 +118,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               doc) =>
                           print('DocumentSnapshot added with ID: ${doc.id}'))
                     },
-                child: Text("click me"))
+                child: const Text("click me"))
           ],
         ),
       ),

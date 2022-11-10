@@ -1,6 +1,5 @@
 import 'package:big_tour/components/facilities.dart';
-import 'package:big_tour/components/imageList.dart';
-import 'package:big_tour/helpers/urlLancher.dart';
+import 'package:big_tour/helpers/url_lancher.dart';
 import 'package:big_tour/pages/gallary.dart';
 import 'package:flutter/material.dart';
 
@@ -50,10 +49,9 @@ class RoomDetailsPage extends StatelessWidget {
                   ),
                 ),
                 ElevatedButton(
-                  // ignore: prefer_const_constructors
                   style: ButtonStyle(
                     backgroundColor:
-                        MaterialStateProperty.all<Color>(Color(0xff00a884)),
+                        MaterialStateProperty.all<Color>(const Color(0xff00a884)),
                   ),
                   onPressed: () => {sendToWhatsApp()},
                   child: Row(
