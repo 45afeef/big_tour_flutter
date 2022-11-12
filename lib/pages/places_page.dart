@@ -6,73 +6,85 @@ import 'package:provider/provider.dart';
 List placeList = [
   {
     "title": "Pookode Lake",
-    "description": "Place importance with beautiful landscapes and good description",
+    "description":
+        "Place importance with beautiful landscapes and good description",
     "imageSrc":
         "https://images.unsplash.com/photo-1666860570907-bc54931a33f9?q=40&w=576"
   },
   {
     "title": "Phantom Rock",
-    "description": "Place importance with beautiful landscapes and good description",
+    "description":
+        "Place importance with beautiful landscapes and good description",
     "imageSrc":
         "https://images.unsplash.com/photo-1666973225662-fe02ab2a1dc8?q=40&w=576"
   },
   {
     "title": "Edacal Caves",
-    "description": "Place importance with beautiful landscapes and good description",
+    "description":
+        "Place importance with beautiful landscapes and good description",
     "imageSrc":
         "https://images.unsplash.com/photo-1664575197229-3bbebc281874?q=40&w=576"
   },
   {
     "title": "Kuruva Dweep",
-    "description": "Place importance with beautiful landscapes and good description",
+    "description":
+        "Place importance with beautiful landscapes and good description",
     "imageSrc":
         "https://images.unsplash.com/photo-1666860570907-bc54931a33f9?q=40&w=576"
   },
   {
     "title": "Banasura",
-    "description": "Place importance with beautiful landscapes and good description",
+    "description":
+        "Place importance with beautiful landscapes and good description",
     "imageSrc":
         "https://images.unsplash.com/photo-1666973225662-fe02ab2a1dc8?q=40&w=576"
   },
   {
     "title": "Chembra peek",
-    "description": "Place importance with beautiful landscapes and good description",
+    "description":
+        "Place importance with beautiful landscapes and good description",
     "imageSrc":
         "https://images.unsplash.com/photo-1664575197229-3bbebc281874?q=40&w=576"
   },
   {
     "title": "Iduki1",
-    "description": "Place importance with beautiful landscapes and good description",
+    "description":
+        "Place importance with beautiful landscapes and good description",
     "imageSrc":
         "https://images.unsplash.com/photo-1666860570907-bc54931a33f9?q=40&w=576"
   },
   {
     "title": "Iduki2",
-    "description": "Place importance with beautiful landscapes and good description",
+    "description":
+        "Place importance with beautiful landscapes and good description",
     "imageSrc":
         "https://images.unsplash.com/photo-1666973225662-fe02ab2a1dc8?q=40&w=576"
   },
   {
     "title": "Iduki3",
-    "description": "Place importance with beautiful landscapes and good description",
+    "description":
+        "Place importance with beautiful landscapes and good description",
     "imageSrc":
         "https://images.unsplash.com/photo-1664575197229-3bbebc281874?q=40&w=576"
   },
   {
     "title": "Iduki1",
-    "description": "Place importance with beautiful landscapes and good description",
+    "description":
+        "Place importance with beautiful landscapes and good description",
     "imageSrc":
         "https://images.unsplash.com/photo-1666860570907-bc54931a33f9?q=40&w=576"
   },
   {
     "title": "Iduki2",
-    "description": "Place importance with beautiful landscapes and good description",
+    "description":
+        "Place importance with beautiful landscapes and good description",
     "imageSrc":
         "https://images.unsplash.com/photo-1666973225662-fe02ab2a1dc8?q=40&w=576"
   },
   {
     "title": "Iduki3",
-    "description": "Place importance with beautiful landscapes and good description",
+    "description":
+        "Place importance with beautiful landscapes and good description",
     "imageSrc":
         "https://images.unsplash.com/photo-1664575197229-3bbebc281874?q=40&w=576"
   },
@@ -94,40 +106,17 @@ class PlacesPage extends StatelessWidget {
           description: placeList[i]["description"],
           align: i % 2 == 0 ? Align.left : Align.right,
         ),
-        separatorBuilder: (BuildContext context, int index) =>
-            const Divider(color: Colors.black26),
+        separatorBuilder: (_, __) => const Divider(color: Colors.black26),
         padding: const EdgeInsets.all(10.0),
       )),
-      // TODO: make it dynamic
       floatingActionButton: FloatingActionButton(
-        onPressed: () => {
-          Provider.of<PlaceModel>(context, listen: false)
-              .save(Place(
-                  name: "Chempra",
-                  description: "description for chempra",
-                  imageUrls: ["No image url"]))
-              .then((docRef) => showDialog(
-                    context: context,
-                    builder: (ctx) => AlertDialog(
-                      title: const Text("Alert Dialog Box"),
-                      content: const Text("You have raised a Alert Dialog Box"),
-                      actions: <Widget>[
-                        TextButton(
-                          onPressed: () {
-                            Navigator.of(ctx).pop();
-                          },
-                          child: Container(
-                            color: Colors.green,
-                            padding: const EdgeInsets.all(14),
-                            child: const Text("okay"),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ))
-        },
-        tooltip: 'Call now',
-        child: const Icon(Icons.send),
+        onPressed: () => showDialog(
+          barrierDismissible: false,
+          context: context,
+          builder: (_) => PlaceForm(),
+        ),
+        tooltip: 'Add new place',
+        child: const Icon(Icons.add),
       ),
     );
   }
@@ -184,4 +173,88 @@ class PlaceItem extends StatelessWidget {
 enum Align {
   right,
   left,
+}
+
+class PlaceForm extends StatefulWidget {
+  const PlaceForm({super.key});
+
+  @override
+  State<PlaceForm> createState() => _PlaceFormState();
+}
+
+class _PlaceFormState extends State<PlaceForm> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final nameController = TextEditingController();
+  final descriptionController = TextEditingController();
+
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is disposed.
+    nameController.dispose();
+    descriptionController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    saveToFirebase() {
+      Provider.of<PlaceModel>(context, listen: false)
+          .save(Place(
+              name: nameController.text,
+              description: descriptionController.text,
+              imageUrls: ["No image url"]))
+          .then(
+            (docRef) => Navigator.pop(context),
+          );
+    }
+
+    return AlertDialog(
+      title: const Text("Add new place"),
+      actions: [
+        TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Cancel")),
+        ElevatedButton(
+          onPressed: () {
+            // Validate will return true if the form is valid, or false if
+            // the form is invalid.
+            if (_formKey.currentState!.validate()) {
+              // Process data.
+              saveToFirebase();
+            }
+          },
+          child: const Text('Add new Place'),
+        ),
+      ],
+      content: Form(
+        key: _formKey,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            // Place Name
+            TextFormField(
+              controller: nameController,
+              decoration: const InputDecoration(hintText: 'New Place Name'),
+              validator: (String? value) {
+                return (value == null || value.isEmpty)
+                    ? 'Please enter place name'
+                    : null;
+              },
+            ),
+            // Place Description
+            TextFormField(
+              controller: descriptionController,
+              decoration: const InputDecoration(hintText: 'Place description'),
+              validator: (String? value) {
+                return (value == null || value.isEmpty)
+                    ? 'Please enter place description'
+                    : null;
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }

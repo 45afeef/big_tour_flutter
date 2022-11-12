@@ -24,7 +24,6 @@ class Place {
   // Used to send data to firebase-firestore
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
       'name': name,
       'description': description,
       'imageUrls': imageUrls,
