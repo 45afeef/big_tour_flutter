@@ -1,6 +1,10 @@
+import 'dart:math';
+
 import 'package:big_tour/data/place.dart';
 import 'package:big_tour/helpers/firebase.dart';
 import 'package:big_tour/providers/place_model.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_ui_firestore/firebase_ui_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -100,17 +104,28 @@ class PlacesPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text("Places in Wayanad")),
       body: Center(
-          child: ListView.separated(
-        itemCount: placeList.length,
-        itemBuilder: (ctx, i) => PlaceItem(
-          imageSrc: placeList[i]["imageSrc"],
-          title: placeList[i]["title"],
-          description: placeList[i]["description"],
-          align: i % 2 == 0 ? Align.left : Align.right,
+        child: FirestoreListView<Place>(
+          query: FirebaseFirestore.instance
+              .collection('places')
+              .orderBy('name')
+              .withConverter<Place>(
+                fromFirestore: (snapshot, _) => Place.fromFirestore(snapshot),
+                toFirestore: (place, _) => place.toFirestore(),
+              ),
+          loadingBuilder: (_) => const Text("Loading"),
+          errorBuilder: (_, __, ___) =>
+              const Text("Error on Loading, check internet or wait some time"),
+          itemBuilder: (ctx, snapshot) {
+            Place place = snapshot.data();
+            return PlaceItem(
+              imageSrc: place.imageUrls.elementAt(0),
+              title: place.name,
+              description: place.description,
+              align: Random().nextInt(2) % 2 == 0 ? Align.left : Align.right,
+            );
+          },
         ),
-        separatorBuilder: (_, __) => const Divider(color: Colors.black26),
-        padding: const EdgeInsets.all(10.0),
-      )),
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => showDialog(
           barrierDismissible: false,

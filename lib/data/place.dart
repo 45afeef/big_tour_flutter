@@ -22,6 +22,8 @@ class Place {
   }
 
   // Used to send data to firebase-firestore
+  Map<String, dynamic> toFirestore() => toMap();
+  Map<String, dynamic> toJson() => toMap();
   Map<String, dynamic> toMap() {
     return {
       'name': name,
