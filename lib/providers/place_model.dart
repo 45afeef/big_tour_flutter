@@ -18,9 +18,9 @@ class PlaceModel with ChangeNotifier {
   //////////////////////////////
   List<Place> get getAllPlaces => allPlaces;
 
-  // All get methds ends here
+  // All get methods ends here
   ///////////////////////////
-  
+
   Future<DocumentReference<Object?>> save(Place place) {
     return db.add(place.toMap());
   }

@@ -1,4 +1,5 @@
 import 'package:big_tour/data/place.dart';
+import 'package:big_tour/helpers/firebase.dart';
 import 'package:big_tour/providers/place_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -252,6 +253,10 @@ class _PlaceFormState extends State<PlaceForm> {
                     : null;
               },
             ),
+            ElevatedButton(
+                onPressed: () => uploadImageToCloudStorageFromGallery(
+                    path: "places/more/is/comming", name: nameController.text),
+                child: const Text("Upload images"))
           ],
         ),
       ),
