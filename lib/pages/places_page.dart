@@ -2,6 +2,7 @@ import 'package:big_tour/data/place.dart';
 import 'package:big_tour/helpers/firebase.dart';
 import 'package:big_tour/providers/place_model.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 List placeList = [
@@ -187,6 +188,7 @@ class _PlaceFormState extends State<PlaceForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final nameController = TextEditingController();
   final descriptionController = TextEditingController();
+  List<XFile> imageFiles = [];
 
   @override
   void dispose() {
@@ -198,17 +200,6 @@ class _PlaceFormState extends State<PlaceForm> {
 
   @override
   Widget build(BuildContext context) {
-    saveToFirebase() {
-      Provider.of<PlaceModel>(context, listen: false)
-          .save(Place(
-              name: nameController.text,
-              description: descriptionController.text,
-              imageUrls: ["No image url"]))
-          .then(
-            (docRef) => Navigator.pop(context),
-          );
-    }
-
     return AlertDialog(
       title: const Text("Add new place"),
       actions: [
@@ -216,12 +207,22 @@ class _PlaceFormState extends State<PlaceForm> {
             onPressed: () => Navigator.pop(context),
             child: const Text("Cancel")),
         ElevatedButton(
-          onPressed: () {
+          onPressed: () async {
             // Validate will return true if the form is valid, or false if
             // the form is invalid.
             if (_formKey.currentState!.validate()) {
-              // Process data.
-              saveToFirebase();
+              // Trigger image selection if not yet selected
+              // then getn the image download urls as list in imageUrls variable
+              List<String> imageUrls = await uploadImages(
+                  imageFiles.isEmpty ? await selectImages() : imageFiles,
+                  'places',
+                  nameController.text);
+
+              // Now time to save everything into firestore database
+              saveToFireStore(Place(
+                  name: nameController.text,
+                  description: descriptionController.text,
+                  imageUrls: imageUrls));
             }
           },
           child: const Text('Add new Place'),
@@ -254,12 +255,20 @@ class _PlaceFormState extends State<PlaceForm> {
               },
             ),
             ElevatedButton(
-                onPressed: () => uploadImageToCloudStorageFromGallery(
-                    path: "places/more/is/comming", name: nameController.text),
-                child: const Text("Upload images"))
+                onPressed: () async {
+                  if (_formKey.currentState!.validate())
+                    imageFiles = await selectImages();
+                },
+                child: const Text("Select Images"))
           ],
         ),
       ),
     );
+  }
+
+  void saveToFireStore(Place place) {
+    Provider.of<PlaceModel>(context, listen: false).save(place).then(
+          (docRef) => Navigator.pop(context),
+        );
   }
 }

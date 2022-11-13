@@ -1,19 +1,12 @@
 import 'dart:io';
 
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-Future<String> uploadImageToCloudStorageFromGallery(
-    {required String path, required String name}) async {
-      // This function will save the image to cloud storage and return a download url
-  final _firebaseStorage = FirebaseStorage.instance
-      .ref()
-      .child(path)
-      .child(name + DateTime.now().microsecondsSinceEpoch.toString());
-  final _imagePicker = ImagePicker();
-
-  PickedFile? image;
+Future<List<XFile>> selectImages() async {
+  final imagePicker = ImagePicker();
 
   //Check Permissions
   await Permission.storage.request();
@@ -21,21 +14,53 @@ Future<String> uploadImageToCloudStorageFromGallery(
   var permissionStatus = await Permission.storage.status;
 
   if (permissionStatus.isGranted) {
-    //Select Image
-    image = await _imagePicker.getImage(source: ImageSource.gallery);
-    var file = File(image?.path ?? "");
-
-    if (image != null) {
-      String imageUrl;
-
-      //Upload to Firebase
-      var snapshot = await _firebaseStorage.putFile(file);
-      imageUrl = await snapshot.ref.getDownloadURL();
-      return imageUrl;
-    } else {
-      return 'No Image Path Received';
-    }
-  } else {
-    return 'Permission not granted. Try Again with permission access';
+    final List<XFile> images = await imagePicker.pickMultiImage();
+    return images;
   }
+  return [];
+}
+
+Future<List<String>> uploadImages(
+  List<XFile> imageFiles,
+  String path,
+  String name,
+) async {
+  final storageRef = FirebaseStorage.instance.ref().child(path).child(name);
+  final List<String> imageUrls = [];
+  for (var xFile in imageFiles) {
+    // Upload each image file
+    String? imageUrl = await uploadFile(
+      xFile,
+      storageRef.child(DateTime.now().microsecondsSinceEpoch.toString()),
+    );
+    imageUrls.add(imageUrl);
+  }
+  return imageUrls;
+}
+
+Future<String> uploadFile(XFile file, Reference ref) async {
+  if (file == null) {
+    // ScaffoldMessenger.of(context).showSnackBar(
+    //   const SnackBar(
+    //     content: Text('No file was selected'),
+    //   ),
+    // );
+
+    return "";
+  }
+
+  TaskSnapshot uploadTask;
+
+  final metadata = SettableMetadata(
+    contentType: 'image/jpeg',
+    customMetadata: {'picked-file-path': file.path},
+  );
+
+  if (kIsWeb) {
+    uploadTask = await ref.putData(await file.readAsBytes(), metadata);
+  } else {
+    uploadTask = await ref.putFile(File(file.path), metadata);
+  }
+  String downlaodUrl = await uploadTask.ref.getDownloadURL();
+  return downlaodUrl;
 }
