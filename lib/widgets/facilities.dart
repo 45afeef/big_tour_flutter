@@ -2,18 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class Facilities extends StatelessWidget {
-  const Facilities({Key? key, required this.size}) : super(key: key);
+  const Facilities({
+    Key? key,
+    required this.size,
+    this.facilities = const [
+      "bonefire.svg",
+      "hiking.svg",
+      "hot_air_ballon.svg",
+      "kayak.svg",
+      "swimming.svg",
+      "tent.svg",
+    ],
+  }) : super(key: key);
 
   final double size;
 
-  static List<String> s = [
-    "bonefire.svg",
-    "hiking.svg",
-    "hot_air_ballon.svg",
-    "kayak.svg",
-    "swimming.svg",
-    "tent.svg",
-  ];
+  final List<String> facilities;
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +26,7 @@ class Facilities extends StatelessWidget {
       child: ListView(
         scrollDirection: Axis.horizontal,
         children: [
-          ...s.map((svgUrl) => SizedBox(
+          ...facilities.map((svgUrl) => SizedBox(
                 width: size,
                 child: Card(
                     elevation: 6,

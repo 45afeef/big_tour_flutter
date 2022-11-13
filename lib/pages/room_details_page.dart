@@ -1,19 +1,16 @@
+import 'package:big_tour/data/room.dart';
 import 'package:big_tour/widgets/facilities.dart';
 import 'package:big_tour/helpers/url_lancher.dart';
 import 'package:big_tour/pages/gallary.dart';
 import 'package:flutter/material.dart';
 
-const List<String> images = [
-  "https://images.unsplash.com/photo-1545239351-1141bd82e8a6?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=481&q=80",
-  "https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
-  "https://images.unsplash.com/photo-1666969295767-4db7ff1f8fec?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1332&q=80",
-  "https://images.unsplash.com/photo-1666730501852-189f6139d518?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1964&q=80",
-  "https://images.unsplash.com/photo-1666974316102-12699b826038?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=464&q=80",
-  "https://images.unsplash.com/photo-1667159590059-ef149c08a5fd?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1332&q=80"
-];
-
 class RoomDetailsPage extends StatelessWidget {
-  const RoomDetailsPage({super.key});
+  const RoomDetailsPage(
+    this.room, {
+    super.key,
+  });
+
+  final Room room;
 
   @override
   Widget build(BuildContext context) {
@@ -29,12 +26,12 @@ class RoomDetailsPage extends StatelessWidget {
                 Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Text(
-                      "\$495",
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                    Text(
+                      "\$${room.price}",
+                      style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      "/night",
+                      "/day",
                       style: Theme.of(context).textTheme.bodySmall,
                     ),
                   ],
@@ -50,8 +47,8 @@ class RoomDetailsPage extends StatelessWidget {
                 ),
                 ElevatedButton(
                   style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStateProperty.all<Color>(const Color(0xff00a884)),
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                        const Color(0xff00a884)),
                   ),
                   onPressed: () => {sendToWhatsApp()},
                   child: Row(
@@ -70,18 +67,18 @@ class RoomDetailsPage extends StatelessWidget {
           child: ListView(
             children: [
               Gallary(
-                images,
-                bottomPosition: -39,
+                room.images,
+                bottomPosition: -9,
                 onTap: () => {
                   Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => const Gallary(images)))
+                      builder: (context) => Gallary(room.images)))
                 },
               ),
               const SizedBox(
-                height: 40,
+                height: 20,
               ),
               Text(
-                "Wildy Mist",
+                room.name,
                 style: Theme.of(context).textTheme.headline2,
               ),
               Row(
@@ -91,7 +88,7 @@ class RoomDetailsPage extends StatelessWidget {
                     color: Colors.amber,
                   ),
                   Text(
-                    "location",
+                    room.locationName,
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                   const Spacer(),
@@ -100,7 +97,7 @@ class RoomDetailsPage extends StatelessWidget {
                     color: Colors.amber,
                   ),
                   Text(
-                    "4.7(9k reviews)",
+                    room.rating.toString(), //"4.7(9k reviews)",
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                 ],
@@ -111,8 +108,7 @@ class RoomDetailsPage extends StatelessWidget {
               const Facilities(size: 60),
               const SizedBox(height: 20),
               Text("Description", style: Theme.of(context).textTheme.headline6),
-              Text(
-                  "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+              Text(room.description,
                   style: Theme.of(context).textTheme.bodyText1),
             ],
           ),

@@ -1,6 +1,7 @@
 import 'package:big_tour/firebase_options.dart';
 import 'package:big_tour/pages/choose_your_need.dart';
 import 'package:big_tour/providers/place_model.dart';
+import 'package:big_tour/providers/room_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +19,7 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => PlaceModel()),
+        ChangeNotifierProvider(create: (_) => RoomModel()),
       ],
       child: const MyApp(),
     ),
@@ -85,7 +87,8 @@ class _MyHomePageState extends State<MyHomePage> {
   _loadDataFromServer() {
     // commenting this as I have started using firebase_ui packages
     // TODO: needs to learn more about it soon
-    Provider.of<PlaceModel>(context, listen: false);//.fetchPlaces();
+    Provider.of<PlaceModel>(context, listen: false); //.fetchPlaces();
+    Provider.of<RoomModel>(context, listen: false); //.fetchPlaces();
   }
 
   @override

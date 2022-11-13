@@ -9,7 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
-
 class PlacesPage extends StatelessWidget {
   const PlacesPage({super.key});
 
@@ -47,7 +46,7 @@ class PlacesPage extends StatelessWidget {
           builder: (_) => const PlaceForm(),
         ),
         tooltip: 'Add new place',
-        child: const Icon(Icons.add),
+        child: const Icon(Icons.add_location_alt_outlined),
       ),
     );
   }
@@ -197,8 +196,7 @@ class _PlaceFormState extends State<PlaceForm> {
   }
 
   void saveToFireStore(Place place) {
-    Provider.of<PlaceModel>(context, listen: false).save(place).then(
-          (docRef) => Navigator.pop(context),
-        );
+    Provider.of<PlaceModel>(context, listen: false).save(place);
+    Navigator.pop(context);
   }
 }

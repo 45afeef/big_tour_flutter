@@ -44,7 +44,7 @@ class _GallaryState extends State<Gallary> {
         Positioned(
           bottom: widget.bottomPosition,
           child: ImageList(
-            widget.images,
+            widget.images.sublist(0,5),
             onSelect: (selectedIndex) =>
                 {setState(() => currentImage = widget.images[selectedIndex])},
           ),
