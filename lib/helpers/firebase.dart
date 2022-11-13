@@ -39,15 +39,6 @@ Future<List<String>> uploadImages(
 }
 
 Future<String> uploadFile(XFile file, Reference ref) async {
-  if (file == null) {
-    // ScaffoldMessenger.of(context).showSnackBar(
-    //   const SnackBar(
-    //     content: Text('No file was selected'),
-    //   ),
-    // );
-
-    return "";
-  }
 
   TaskSnapshot uploadTask;
 

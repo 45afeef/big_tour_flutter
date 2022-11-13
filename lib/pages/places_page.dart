@@ -9,92 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
-List placeList = [
-  {
-    "title": "Pookode Lake",
-    "description":
-        "Place importance with beautiful landscapes and good description",
-    "imageSrc":
-        "https://images.unsplash.com/photo-1666860570907-bc54931a33f9?q=40&w=576"
-  },
-  {
-    "title": "Phantom Rock",
-    "description":
-        "Place importance with beautiful landscapes and good description",
-    "imageSrc":
-        "https://images.unsplash.com/photo-1666973225662-fe02ab2a1dc8?q=40&w=576"
-  },
-  {
-    "title": "Edacal Caves",
-    "description":
-        "Place importance with beautiful landscapes and good description",
-    "imageSrc":
-        "https://images.unsplash.com/photo-1664575197229-3bbebc281874?q=40&w=576"
-  },
-  {
-    "title": "Kuruva Dweep",
-    "description":
-        "Place importance with beautiful landscapes and good description",
-    "imageSrc":
-        "https://images.unsplash.com/photo-1666860570907-bc54931a33f9?q=40&w=576"
-  },
-  {
-    "title": "Banasura",
-    "description":
-        "Place importance with beautiful landscapes and good description",
-    "imageSrc":
-        "https://images.unsplash.com/photo-1666973225662-fe02ab2a1dc8?q=40&w=576"
-  },
-  {
-    "title": "Chembra peek",
-    "description":
-        "Place importance with beautiful landscapes and good description",
-    "imageSrc":
-        "https://images.unsplash.com/photo-1664575197229-3bbebc281874?q=40&w=576"
-  },
-  {
-    "title": "Iduki1",
-    "description":
-        "Place importance with beautiful landscapes and good description",
-    "imageSrc":
-        "https://images.unsplash.com/photo-1666860570907-bc54931a33f9?q=40&w=576"
-  },
-  {
-    "title": "Iduki2",
-    "description":
-        "Place importance with beautiful landscapes and good description",
-    "imageSrc":
-        "https://images.unsplash.com/photo-1666973225662-fe02ab2a1dc8?q=40&w=576"
-  },
-  {
-    "title": "Iduki3",
-    "description":
-        "Place importance with beautiful landscapes and good description",
-    "imageSrc":
-        "https://images.unsplash.com/photo-1664575197229-3bbebc281874?q=40&w=576"
-  },
-  {
-    "title": "Iduki1",
-    "description":
-        "Place importance with beautiful landscapes and good description",
-    "imageSrc":
-        "https://images.unsplash.com/photo-1666860570907-bc54931a33f9?q=40&w=576"
-  },
-  {
-    "title": "Iduki2",
-    "description":
-        "Place importance with beautiful landscapes and good description",
-    "imageSrc":
-        "https://images.unsplash.com/photo-1666973225662-fe02ab2a1dc8?q=40&w=576"
-  },
-  {
-    "title": "Iduki3",
-    "description":
-        "Place importance with beautiful landscapes and good description",
-    "imageSrc":
-        "https://images.unsplash.com/photo-1664575197229-3bbebc281874?q=40&w=576"
-  },
-];
 
 class PlacesPage extends StatelessWidget {
   const PlacesPage({super.key});
@@ -130,7 +44,7 @@ class PlacesPage extends StatelessWidget {
         onPressed: () => showDialog(
           barrierDismissible: false,
           context: context,
-          builder: (_) => PlaceForm(),
+          builder: (_) => const PlaceForm(),
         ),
         tooltip: 'Add new place',
         child: const Icon(Icons.add),
@@ -271,8 +185,9 @@ class _PlaceFormState extends State<PlaceForm> {
             ),
             ElevatedButton(
                 onPressed: () async {
-                  if (_formKey.currentState!.validate())
+                  if (_formKey.currentState!.validate()) {
                     imageFiles = await selectImages();
+                  }
                 },
                 child: const Text("Select Images"))
           ],

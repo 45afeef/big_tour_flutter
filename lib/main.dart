@@ -83,8 +83,9 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   _loadDataFromServer() {
-    Provider.of<PlaceModel>(context, listen: false).fetchPlaces();
-    // TODO: start using the data in firestore
+    // commenting this as I have started using firebase_ui packages
+    // TODO: needs to learn more about it soon
+    Provider.of<PlaceModel>(context, listen: false);//.fetchPlaces();
   }
 
   @override
