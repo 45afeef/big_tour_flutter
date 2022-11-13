@@ -1,4 +1,4 @@
-import 'package:big_tour/components/facilities.dart';
+import 'package:big_tour/widgets/facilities.dart';
 import 'package:big_tour/helpers/url_lancher.dart';
 import 'package:big_tour/pages/gallary.dart';
 import 'package:flutter/material.dart';

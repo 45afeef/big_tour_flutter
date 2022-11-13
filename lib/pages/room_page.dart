@@ -1,4 +1,4 @@
-import 'package:big_tour/components/facilities.dart';
+import 'package:big_tour/widgets/facilities.dart';
 import 'package:big_tour/pages/room_details_page.dart';
 import 'package:flutter/material.dart';
 

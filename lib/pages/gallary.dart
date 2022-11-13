@@ -1,4 +1,4 @@
-import 'package:big_tour/components/image_list.dart';
+import 'package:big_tour/widgets/image_list.dart';
 import "package:flutter/material.dart";
 
 class Gallary extends StatefulWidget {
