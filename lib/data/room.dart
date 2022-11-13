@@ -42,7 +42,7 @@ class Room {
       description: data.get('description'),
       phoneNumbers: [...data.get('phoneNumbers')],
       locationName: data.get('locationName'),
-      facilities: data.get('facilities'),
+      facilities: [...data.get('facilities')],
       images: [...data.get('images')],
       rating: data.get('rating'),
     );

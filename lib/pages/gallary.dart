@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:big_tour/widgets/image_list.dart';
 import "package:flutter/material.dart";
 
@@ -44,7 +46,7 @@ class _GallaryState extends State<Gallary> {
         Positioned(
           bottom: widget.bottomPosition,
           child: ImageList(
-            widget.images.sublist(0,5),
+            widget.images.sublist(0, min(5, widget.images.length)),
             onSelect: (selectedIndex) =>
                 {setState(() => currentImage = widget.images[selectedIndex])},
           ),
