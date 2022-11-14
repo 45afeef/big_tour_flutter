@@ -9,30 +9,33 @@ class ChooseYourNeed extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Column(children: <Widget>[
-        const Padding(
-          padding: EdgeInsets.all(20.0),
-          child: Text('What do you want ?'),
-        ),
-        ImagedButton(
-            onPressed: () => {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => const PlacesPage()))
-                },
-            text: "Places to visit",
-            url: "https://cdn-icons-png.flaticon.com/512/854/854878.png"),
-        ImagedButton(
-            onPressed: () => {
-                  Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => const RoomPage()))
-                },
-            text: "Rooms to stay",
-            url: "https://cdn-icons-png.flaticon.com/512/1069/1069454.png"),
-        ImagedButton(
-            onPressed: () => {},
-            text: "Restaurants to eat",
-            url: "https://cdn-icons-png.flaticon.com/512/776/776443.png"),
-      ]),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          const Padding(
+            padding: EdgeInsets.all(20.0),
+            child: Text('What do you want ?'),
+          ),
+          ImagedButton(
+              onPressed: () => {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => const PlacesPage()))
+                  },
+              text: "Places to visit",
+              url: "https://cdn-icons-png.flaticon.com/512/854/854878.png"),
+          ImagedButton(
+              onPressed: () => {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => const RoomPage()))
+                  },
+              text: "Rooms to stay",
+              url: "https://cdn-icons-png.flaticon.com/512/1069/1069454.png"),
+          ImagedButton(
+              onPressed: () => {},
+              text: "Restaurants to eat",
+              url: "https://cdn-icons-png.flaticon.com/512/776/776443.png"),
+        ],
+      ),
     );
   }
 }
