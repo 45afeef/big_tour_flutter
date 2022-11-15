@@ -34,7 +34,7 @@ class PlacesPage extends StatelessWidget {
               imageSrc: place.imageUrls.elementAt(0),
               title: place.name,
               description: place.description,
-              align: Random().nextInt(2) % 2 == 0 ? Align.left : Align.right,
+              align: Align.right,
             );
           },
         ),
@@ -69,9 +69,15 @@ class PlaceItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Widget image = Expanded(
-      child: ClipRRect(
-          borderRadius: const BorderRadius.all(Radius.circular(15)),
-          child: Image.network(imageSrc)),
+      child: AspectRatio(
+        aspectRatio: 16 / 9,
+        child: ClipRRect(
+            borderRadius: const BorderRadius.all(Radius.circular(15)),
+            child: Image.network(
+              imageSrc,
+              fit: BoxFit.cover,
+            )),
+      ),
     );
     Widget titleAndDescription = Expanded(
         child: Column(
@@ -83,6 +89,7 @@ class PlaceItem extends StatelessWidget {
     ));
 
     return Container(
+      margin: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.all(Radius.circular(15)),
         color: Colors.deepOrange[50],
@@ -139,6 +146,9 @@ class _PlaceFormState extends State<PlaceForm> {
             // Validate will return true if the form is valid, or false if
             // the form is invalid.
             if (_formKey.currentState!.validate()) {
+              // Close the Alertdialog way before starting the upload process
+              Navigator.pop(context);
+
               // Trigger image selection if not yet selected
               // then getn the image download urls as list in imageUrls variable
               List<String> imageUrls = await uploadImages(
@@ -197,6 +207,5 @@ class _PlaceFormState extends State<PlaceForm> {
 
   void saveToFireStore(Place place) {
     Provider.of<PlaceModel>(context, listen: false).save(place);
-    Navigator.pop(context);
   }
 }

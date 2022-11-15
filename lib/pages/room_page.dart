@@ -197,6 +197,9 @@ class _RoomFormState extends State<RoomForm> {
             // Validate will return true if the form is valid, or false if
             // the form is invalid.
             if (_formKey.currentState!.validate()) {
+              // Close the Alertdialog way before starting the upload process
+              Navigator.pop(context);
+
               // Trigger image selection if not yet selected
               // then getn the image download urls as list in imageUrls variable
               List<String> imageUrls = await uploadImages(
@@ -212,6 +215,7 @@ class _RoomFormState extends State<RoomForm> {
                   description: descriptionController.text,
                   phoneNumbers: [phoneNumbersController.text],
                   locationName: locationNameController.text,
+                  // TODO: make check box like multiple selection for facilities
                   facilities: [facilitiesController.text],
                   images: imageUrls,
                   rating: double.parse(ratingController.text),
@@ -224,92 +228,92 @@ class _RoomFormState extends State<RoomForm> {
       ],
       content: Form(
         key: _formKey,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            // Room Name
-            TextFormField(
-                controller: nameController,
-                decoration: const InputDecoration(hintText: 'New Room Name'),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              // Room Name
+              TextFormField(
+                  controller: nameController,
+                  decoration: const InputDecoration(hintText: 'New Room Name'),
+                  validator: (String? value) {
+                    return (value == null || value.isEmpty)
+                        ? 'Please enter room name'
+                        : null;
+                  }),
+              // Room Description
+              TextFormField(
+                controller: descriptionController,
+                decoration: const InputDecoration(hintText: 'Room description'),
                 validator: (String? value) {
                   return (value == null || value.isEmpty)
-                      ? 'Please enter room name'
+                      ? 'Please enter room description'
                       : null;
-                }),
-            // Room Description
-            TextFormField(
-              controller: descriptionController,
-              decoration: const InputDecoration(hintText: 'Room description'),
-              validator: (String? value) {
-                return (value == null || value.isEmpty)
-                    ? 'Please enter room description'
-                    : null;
-              },
-            ),
-            // Room price
-            TextFormField(
-                keyboardType: TextInputType.number,
-                controller: priceController,
-                decoration: const InputDecoration(hintText: 'Price eg. 320'),
-                validator: (String? value) {
-                  return (value == null || value.isEmpty)
-                      ? 'Please enter valid price'
-                      : null;
-                }),
-            // Room phone number
-            TextFormField(
-                keyboardType: TextInputType.phone,
-                controller: phoneNumbersController,
-                decoration: const InputDecoration(hintText: 'Phone Number'),
-                validator: (String? value) {
-                  return (value == null || value.isEmpty)
-                      ? 'Please enter Phone Number'
-                      : null;
-                }),
-            // Room location
-            TextFormField(
-                keyboardType: TextInputType.name,
-                controller: locationNameController,
-                decoration:
-                    const InputDecoration(hintText: 'Where is the location'),
-                validator: (String? value) {
-                  return (value == null || value.isEmpty)
-                      ? 'Please enter your location'
-                      : null;
-                }),
-            // Room facilities
-            TextFormField(
-                controller: facilitiesController,
-                decoration:
-                    const InputDecoration(hintText: 'Facilities available')),
-            // Room rating
-            TextFormField(
-                keyboardType: TextInputType.number,
-                controller: ratingController,
-                decoration: const InputDecoration(hintText: 'Stars'),
-                validator: (String? value) {
-                  return (value == null || value.isEmpty)
-                      ? 'Please enter valid rating'
-                      : null;
-                }),
-
-            ElevatedButton(
-                onPressed: () async {
-                  if (_formKey.currentState!.validate()) {
-                    imageFiles = await selectImages();
-                  }
                 },
-                child: const Text("Select Images"))
-          ],
+              ),
+              // Room price
+              TextFormField(
+                  keyboardType: TextInputType.number,
+                  controller: priceController,
+                  decoration: const InputDecoration(hintText: 'Price eg. 320'),
+                  validator: (String? value) {
+                    return (value == null || value.isEmpty)
+                        ? 'Please enter valid price'
+                        : null;
+                  }),
+              // Room phone number
+              TextFormField(
+                  keyboardType: TextInputType.phone,
+                  controller: phoneNumbersController,
+                  decoration: const InputDecoration(hintText: 'Phone Number'),
+                  validator: (String? value) {
+                    return (value == null || value.isEmpty)
+                        ? 'Please enter Phone Number'
+                        : null;
+                  }),
+              // Room location
+              TextFormField(
+                  keyboardType: TextInputType.name,
+                  controller: locationNameController,
+                  decoration:
+                      const InputDecoration(hintText: 'Where is the location'),
+                  validator: (String? value) {
+                    return (value == null || value.isEmpty)
+                        ? 'Please enter your location'
+                        : null;
+                  }),
+              // Room facilities
+              TextFormField(
+                  controller: facilitiesController,
+                  decoration:
+                      const InputDecoration(hintText: 'Facilities available')),
+              // Room rating
+              TextFormField(
+                  keyboardType: TextInputType.number,
+                  controller: ratingController,
+                  decoration: const InputDecoration(hintText: 'Stars'),
+                  validator: (String? value) {
+                    return (value == null || value.isEmpty)
+                        ? 'Please enter valid rating'
+                        : null;
+                  }),
+
+              ElevatedButton(
+                  onPressed: () async {
+                    if (_formKey.currentState!.validate()) {
+                      imageFiles = await selectImages();
+                    }
+                  },
+                  child: const Text("Select Images"))
+            ],
+          ),
         ),
       ),
     );
   }
 
   void saveToFireStore(Room room) {
-    Provider.of<RoomModel>(context, listen: false)
-        .save(room)
-        .then((value) => Navigator.pop(context));
+    Provider.of<RoomModel>(context, listen: false).save(room);
   }
 }
