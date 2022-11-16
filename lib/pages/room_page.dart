@@ -1,4 +1,5 @@
 import 'package:big_tour/data/room.dart';
+import 'package:big_tour/helpers/comon.dart';
 import 'package:big_tour/widgets/facilities.dart';
 import 'package:big_tour/pages/room_details_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -90,7 +91,6 @@ class RoomItem extends StatelessWidget {
                                 room.locationName,
                                 style: Theme.of(context).textTheme.bodySmall,
                               ),
-                              // Spacer(),
                               Text(room.name,
                                   style: Theme.of(context).textTheme.headline6),
                             ],
@@ -101,7 +101,11 @@ class RoomItem extends StatelessWidget {
                             Icons.favorite_outline,
                             color: Colors.pink,
                           ),
-                          onPressed: () => {},
+                          onPressed: () => {
+                            // TODO: add the functionality
+                            showToast(context,
+                                "This function is not added yet. We will add it soon")
+                          },
                         )
                       ],
                     ),

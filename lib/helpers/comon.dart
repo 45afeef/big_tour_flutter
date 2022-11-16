@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-void _showToast(BuildContext context) {
+void showToast(BuildContext context, toastMessage) {
   final scaffold = ScaffoldMessenger.of(context);
   scaffold.showSnackBar(
     SnackBar(
-      content: const Text('Added to favorite'),
+      content: Text(toastMessage),
       action: SnackBarAction(
           label: 'UNDO', onPressed: scaffold.hideCurrentSnackBar),
     ),
