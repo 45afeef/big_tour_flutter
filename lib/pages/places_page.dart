@@ -1,7 +1,7 @@
-
 import 'package:big_tour/data/place.dart';
 import 'package:big_tour/helpers/firebase.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_ui_firestore/firebase_ui_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -36,15 +36,18 @@ class PlacesPage extends StatelessWidget {
           },
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => showDialog(
-          barrierDismissible: false,
-          context: context,
-          builder: (_) => const PlaceForm(),
-        ),
-        tooltip: 'Add new place',
-        child: const Icon(Icons.add_location_alt_outlined),
-      ),
+      floatingActionButton:
+          FirebaseAuth.instance.currentUser?.phoneNumber == "+917558009733"
+              ? FloatingActionButton(
+                  onPressed: () => showDialog(
+                    barrierDismissible: false,
+                    context: context,
+                    builder: (_) => const PlaceForm(),
+                  ),
+                  tooltip: 'Add new place',
+                  child: const Icon(Icons.add_location_alt_outlined),
+                )
+              : const SizedBox(),
     );
   }
 }

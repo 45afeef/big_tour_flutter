@@ -3,6 +3,7 @@ import 'package:big_tour/helpers/comon.dart';
 import 'package:big_tour/widgets/facilities.dart';
 import 'package:big_tour/pages/room_details_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_ui_firestore/firebase_ui_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -16,15 +17,18 @@ class RoomPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("Rooms in wayanad")),
-      floatingActionButton: FloatingActionButton(
-        tooltip: 'Add new room',
-        child: const Icon(Icons.add_business_rounded),
-        onPressed: () => showDialog(
-          barrierDismissible: false,
-          context: context,
-          builder: (_) => const RoomForm(),
-        ),
-      ),
+      floatingActionButton:
+          FirebaseAuth.instance.currentUser?.phoneNumber == "+917558009733"
+              ? FloatingActionButton(
+                  tooltip: 'Add new room',
+                  child: const Icon(Icons.add_business_rounded),
+                  onPressed: () => showDialog(
+                    barrierDismissible: false,
+                    context: context,
+                    builder: (_) => const RoomForm(),
+                  ),
+                )
+              : const SizedBox(),
       body: Center(
         child: FirestoreListView<Room>(
           query: FirebaseFirestore.instance
