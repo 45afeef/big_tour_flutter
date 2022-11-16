@@ -1,13 +1,10 @@
-import 'dart:math';
 
 import 'package:big_tour/data/place.dart';
 import 'package:big_tour/helpers/firebase.dart';
-import 'package:big_tour/providers/place_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_ui_firestore/firebase_ui_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:provider/provider.dart';
 
 class PlacesPage extends StatelessWidget {
   const PlacesPage({super.key});
@@ -206,6 +203,6 @@ class _PlaceFormState extends State<PlaceForm> {
   }
 
   void saveToFireStore(Place place) {
-    Provider.of<PlaceModel>(context, listen: false).save(place);
+    FirebaseFirestore.instance.collection("places").add(place.toMap());
   }
 }

@@ -5,10 +5,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_ui_firestore/firebase_ui_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:provider/provider.dart';
 
 import '../helpers/firebase.dart';
-import '../providers/room_model.dart';
 
 class RoomPage extends StatelessWidget {
   const RoomPage({super.key});
@@ -71,7 +69,8 @@ class RoomItem extends StatelessWidget {
                 dimension: 130,
                 child: ClipRRect(
                   borderRadius: const BorderRadius.all(Radius.circular(10)),
-                  child: Image.network(room.images.elementAt(0),
+                  child: Image.network(
+                      room.images.isEmpty ? "" : room.images.elementAt(0),
                       fit: BoxFit.cover),
                 ),
               ),
@@ -197,15 +196,18 @@ class _RoomFormState extends State<RoomForm> {
             // Validate will return true if the form is valid, or false if
             // the form is invalid.
             if (_formKey.currentState!.validate()) {
+              // Trigger image selection if not yet selected
+
+              if (imageFiles.isEmpty) imageFiles = await selectImages();
+
+              // Stop working this block if no image is selected
+              if (imageFiles.isEmpty) return;
               // Close the Alertdialog way before starting the upload process
               Navigator.pop(context);
 
-              // Trigger image selection if not yet selected
               // then getn the image download urls as list in imageUrls variable
-              List<String> imageUrls = await uploadImages(
-                  imageFiles.isEmpty ? await selectImages() : imageFiles,
-                  'rooms',
-                  nameController.text);
+              List<String> imageUrls =
+                  await uploadImages(imageFiles, 'rooms', nameController.text);
 
               // Now time to save everything into firestore database
               saveToFireStore(
@@ -314,6 +316,6 @@ class _RoomFormState extends State<RoomForm> {
   }
 
   void saveToFireStore(Room room) {
-    Provider.of<RoomModel>(context, listen: false).save(room);
+    FirebaseFirestore.instance.collection("rooms").add(room.toMap());
   }
 }
