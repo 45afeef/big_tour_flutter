@@ -106,7 +106,7 @@ class RoomItem extends StatelessWidget {
                             color: Colors.pink,
                           ),
                           onPressed: () => {
-                            // TODO: add the functionality
+                            // TODO: add the favorite functionality
                             showToast(context,
                                 "This function is not added yet. We will add it soon")
                           },
@@ -150,6 +150,26 @@ class RoomItem extends StatelessWidget {
             ],
           ),
         ),
+        onLongPress: () => showDialog(
+            context: context,
+            builder: (_) => AlertDialog(
+                  content:
+                      const Text("Are you sure want to delete the room"),
+                  actions: [
+                    TextButton(
+                        onPressed: () => {
+                              Navigator.pop(context),
+                              FirebaseFirestore.instance
+                                  .collection('rooms')
+                                  .doc(room.id)
+                                  .delete()
+                            },
+                        child: const Text("Delete")),
+                    ElevatedButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text("Cancel and Go Back"))
+                  ],
+                )),
       ),
     );
   }

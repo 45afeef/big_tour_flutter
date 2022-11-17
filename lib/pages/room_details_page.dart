@@ -68,7 +68,8 @@ class RoomDetailsPage extends StatelessWidget {
             children: [
               Gallary(
                 room.images,
-                bottomPosition: -9,
+                bottomPosition: -15,
+                isSquare: true,
                 onTap: () => {
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) => Gallary(room.images)))

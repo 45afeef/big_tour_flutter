@@ -8,12 +8,14 @@ class Gallary extends StatefulWidget {
     this.images, {
     this.bottomPosition = 0,
     this.onTap,
+    this.isSquare = false,
     super.key,
   });
 
   final List<String> images;
   final double bottomPosition;
   final Function()? onTap;
+  final bool isSquare;
 
   @override
   State<Gallary> createState() => _GallaryState();
@@ -29,28 +31,30 @@ class _GallaryState extends State<Gallary> {
 
   @override
   Widget build(BuildContext context) {
+    Widget imageView = GestureDetector(
+      onTap: widget.onTap,
+      child: Image.network(currentImage, fit: BoxFit.cover),
+    );
+
     return Stack(
       alignment: Alignment.center,
       clipBehavior: Clip.none,
       children: [
-        ClipRRect(
-          borderRadius: const BorderRadius.all(Radius.circular(15)),
-          child: AspectRatio(
-            aspectRatio: 1,
-            child: GestureDetector(
-              onTap: widget.onTap,
-              child: Image.network(currentImage, fit: BoxFit.cover),
-            ),
-          ),
-        ),
+        widget.isSquare
+            ? ClipRRect(
+                borderRadius: const BorderRadius.all(Radius.circular(15)),
+                child: AspectRatio(
+                  aspectRatio: 1,
+                  child: imageView,
+                ))
+            : imageView,
         Positioned(
-          bottom: widget.bottomPosition,
-          child: ImageList(
-            widget.images.sublist(0, min(5, widget.images.length)),
-            onSelect: (selectedIndex) =>
-                {setState(() => currentImage = widget.images[selectedIndex])},
-          ),
-        )
+            bottom: widget.bottomPosition,
+            child: ImageList(
+              widget.images.sublist(0, min(5, widget.images.length)),
+              onSelect: (selectedIndex) =>
+                  {setState(() => currentImage = widget.images[selectedIndex])},
+            ))
       ],
     );
   }

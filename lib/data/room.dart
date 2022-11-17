@@ -8,6 +8,7 @@ class Room {
   List<String> facilities;
   List<String> images;
   double? rating;
+  bool isAvailable;
 
   Room({
     this.id = '',
@@ -18,6 +19,7 @@ class Room {
     required this.locationName,
     required this.facilities,
     required this.images,
+    this.isAvailable = true,
     this.rating,
   });
 
@@ -45,6 +47,7 @@ class Room {
       facilities: [...data.get('facilities')],
       images: [...data.get('images')],
       rating: data.get('rating'),
+      isAvailable: data.get('isAvailable'),
     );
   }
 
@@ -61,6 +64,7 @@ class Room {
       'facilities': facilities,
       'images': images,
       'rating': rating,
+      'isAvailable': isAvailable,
     };
   }
 }
