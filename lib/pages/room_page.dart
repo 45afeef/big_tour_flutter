@@ -33,7 +33,7 @@ class RoomPage extends StatelessWidget {
         child: FirestoreListView<Room>(
           query: FirebaseFirestore.instance
               .collection('rooms')
-              .orderBy('name')
+              .where("isAvailable", isEqualTo: true)
               .withConverter<Room>(
                 fromFirestore: (snapshot, _) => Room.fromFirestore(snapshot),
                 toFirestore: (room, _) => room.toFirestore(),
@@ -154,7 +154,7 @@ class RoomItem extends StatelessWidget {
             context: context,
             builder: (_) => AlertDialog(
                   content:
-                      const Text("Are you sure want to delete the room"),
+                      const Text("You can either edit or delete the room here"),
                   actions: [
                     TextButton(
                         onPressed: () => {
@@ -165,6 +165,15 @@ class RoomItem extends StatelessWidget {
                                   .delete()
                             },
                         child: const Text("Delete")),
+                    TextButton(
+                        onPressed: () => {
+                              Navigator.pop(context),
+                              showDialog(
+                                context: context,
+                                builder: (_) => RoomForm(room: room),
+                              )
+                            },
+                        child: const Text("Edit")),
                     ElevatedButton(
                         onPressed: () => Navigator.pop(context),
                         child: const Text("Cancel and Go Back"))
@@ -176,7 +185,9 @@ class RoomItem extends StatelessWidget {
 }
 
 class RoomForm extends StatefulWidget {
-  const RoomForm({super.key});
+  const RoomForm({this.room, super.key});
+
+  final Room? room;
 
   @override
   State<RoomForm> createState() => _RoomFormState();
@@ -185,16 +196,35 @@ class RoomForm extends StatefulWidget {
 class _RoomFormState extends State<RoomForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  final nameController = TextEditingController();
-  final priceController = TextEditingController();
-  final descriptionController = TextEditingController();
-  final phoneNumbersController = TextEditingController();
-  final locationNameController = TextEditingController();
-  final facilitiesController = TextEditingController();
-  final imagesController = TextEditingController();
-  final ratingController = TextEditingController();
+  late TextEditingController nameController;
+  late TextEditingController priceController;
+  late TextEditingController descriptionController;
+  late TextEditingController phoneNumbersController;
+  late TextEditingController locationNameController;
+  late TextEditingController facilitiesController;
+  late TextEditingController ratingController;
 
   List<XFile> imageFiles = [];
+
+  @override
+  void initState() {
+    super.initState();
+
+    // initialize text editing controllers
+    nameController = TextEditingController(text: widget.room?.name);
+    priceController =
+        TextEditingController(text: widget.room?.price.toString());
+    descriptionController =
+        TextEditingController(text: widget.room?.description);
+    phoneNumbersController =
+        TextEditingController(text: widget.room?.phoneNumbers.first);
+    locationNameController =
+        TextEditingController(text: widget.room?.locationName);
+    facilitiesController =
+        TextEditingController(text: widget.room?.facilities.first);
+    ratingController =
+        TextEditingController(text: widget.room?.rating.toString());
+  }
 
   @override
   void dispose() {
@@ -205,7 +235,6 @@ class _RoomFormState extends State<RoomForm> {
     phoneNumbersController.dispose();
     locationNameController.dispose();
     facilitiesController.dispose();
-    imagesController.dispose();
     ratingController.dispose();
 
     super.dispose();
@@ -223,37 +252,59 @@ class _RoomFormState extends State<RoomForm> {
           onPressed: () async {
             // Validate will return true if the form is valid, or false if
             // the form is invalid.
+
             if (_formKey.currentState!.validate()) {
-              // Trigger image selection if not yet selected
-
-              if (imageFiles.isEmpty) imageFiles = await selectImages();
-
-              // Stop working this block if no image is selected
-              if (imageFiles.isEmpty) return;
-              // Close the Alertdialog way before starting the upload process
-              Navigator.pop(context);
-
-              // then getn the image download urls as list in imageUrls variable
-              List<String> imageUrls =
-                  await uploadImages(imageFiles, 'rooms', nameController.text);
-
               // Now time to save everything into firestore database
-              saveToFireStore(
-                Room(
-                  name: nameController.text,
-                  price: double.parse(priceController.text),
-                  description: descriptionController.text,
-                  phoneNumbers: [phoneNumbersController.text],
-                  locationName: locationNameController.text,
-                  // TODO: make check box like multiple selection for facilities
-                  facilities: [facilitiesController.text],
-                  images: imageUrls,
-                  rating: double.parse(ratingController.text),
-                ),
-              );
+
+               // save a new room
+              if (widget.room == null) {
+                // Trigger image selection if not yet selected
+                if (imageFiles.isEmpty) imageFiles = await selectImages();
+
+                // Stop working this block if no image is selected
+                if (imageFiles.isEmpty) return;
+                // Close the Alertdialog way before starting the upload process
+                Navigator.pop(context);
+
+                // then getn the image download urls as list in imageUrls variable
+                List<String> imageUrls = await uploadImages(
+                    imageFiles, 'rooms', nameController.text);
+
+                saveToFireStore(
+                  Room(
+                    name: nameController.text,
+                    price: double.parse(priceController.text),
+                    description: descriptionController.text,
+                    phoneNumbers: [phoneNumbersController.text],
+                    locationName: locationNameController.text,
+                    // TODO: make check box like multiple selection for facilities
+                    facilities: [facilitiesController.text],
+                    images: imageUrls,
+                    rating: double.parse(ratingController.text),
+                  ),
+                );
+              }
+              // save an edit to existing room
+              else {
+                Navigator.pop(context);
+
+                FirebaseFirestore.instance
+                    .collection("rooms")
+                    .doc(widget.room?.id)
+                    .set(Room(
+                      name: nameController.text,
+                      price: double.parse(priceController.text),
+                      description: descriptionController.text,
+                      phoneNumbers: [phoneNumbersController.text],
+                      locationName: locationNameController.text,
+                      facilities: [facilitiesController.text],
+                      images: [...?widget.room?.images],
+                      rating: double.parse(ratingController.text),
+                    ).toFirestore());
+              }
             }
           },
-          child: const Text('Add new Room'),
+          child: Text(widget.room == null ? 'Add new Room' : 'Save Edit'),
         ),
       ],
       content: Form(
@@ -329,13 +380,15 @@ class _RoomFormState extends State<RoomForm> {
                         : null;
                   }),
 
-              ElevatedButton(
-                  onPressed: () async {
-                    if (_formKey.currentState!.validate()) {
-                      imageFiles = await selectImages();
-                    }
-                  },
-                  child: const Text("Select Images"))
+              widget.room == null
+                  ? ElevatedButton(
+                      onPressed: () async {
+                        if (_formKey.currentState!.validate()) {
+                          imageFiles = await selectImages();
+                        }
+                      },
+                      child: const Text("Select Images"))
+                  : const SizedBox()
             ],
           ),
         ),

@@ -28,9 +28,7 @@ class PlacesPage extends StatelessWidget {
           itemBuilder: (ctx, snapshot) {
             Place place = snapshot.data();
             return PlaceItem(
-              imageSrc: place.imageUrls.elementAt(0),
-              title: place.name,
-              description: place.description,
+              place: place,
               align: Align.right,
             );
           },
@@ -55,15 +53,11 @@ class PlacesPage extends StatelessWidget {
 class PlaceItem extends StatelessWidget {
   const PlaceItem({
     Key? key,
-    required this.imageSrc,
-    required this.title,
-    required this.description,
+    required this.place,
     this.align = Align.left,
   }) : super(key: key);
 
-  final String title;
-  final String description;
-  final String imageSrc;
+  final Place place;
   final Align align;
 
   @override
@@ -74,7 +68,7 @@ class PlaceItem extends StatelessWidget {
         child: ClipRRect(
             borderRadius: const BorderRadius.all(Radius.circular(15)),
             child: Image.network(
-              imageSrc,
+              place.imageUrls.elementAt(0),
               fit: BoxFit.cover,
             )),
       ),
@@ -83,25 +77,29 @@ class PlaceItem extends StatelessWidget {
         child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text(title, style: Theme.of(context).textTheme.headline6),
-        Text(description, style: Theme.of(context).textTheme.bodyText1),
+        Text(place.name, style: Theme.of(context).textTheme.headline6),
+        Text(place.description, style: Theme.of(context).textTheme.bodyText1),
       ],
     ));
 
-    return Container(
-      margin: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        borderRadius: const BorderRadius.all(Radius.circular(15)),
-        color: Colors.deepOrange[50],
-      ),
-      padding: const EdgeInsets.all(10.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ...(align == Align.right
-              ? [image, const SizedBox(width: 10), titleAndDescription]
-              : [titleAndDescription, const SizedBox(width: 10), image])
-        ],
+    return InkWell(
+      onLongPress: () =>
+          showDialog(context: context, builder: (_) => PlaceForm(place: place)),
+      child: Container(
+        margin: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          borderRadius: const BorderRadius.all(Radius.circular(15)),
+          color: Colors.deepOrange[50],
+        ),
+        padding: const EdgeInsets.all(10.0),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ...(align == Align.right
+                ? [image, const SizedBox(width: 10), titleAndDescription]
+                : [titleAndDescription, const SizedBox(width: 10), image])
+          ],
+        ),
       ),
     );
   }
@@ -113,7 +111,9 @@ enum Align {
 }
 
 class PlaceForm extends StatefulWidget {
-  const PlaceForm({super.key});
+  const PlaceForm({this.place, super.key});
+
+  final Place? place;
 
   @override
   State<PlaceForm> createState() => _PlaceFormState();
@@ -121,9 +121,21 @@ class PlaceForm extends StatefulWidget {
 
 class _PlaceFormState extends State<PlaceForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final nameController = TextEditingController();
-  final descriptionController = TextEditingController();
+
+  late TextEditingController nameController;
+  late TextEditingController descriptionController;
+
   List<XFile> imageFiles = [];
+
+  @override
+  void initState() {
+    super.initState();
+
+    // initialize text editing controllers
+    nameController = TextEditingController(text: widget.place?.name);
+    descriptionController =
+        TextEditingController(text: widget.place?.description);
+  }
 
   @override
   void dispose() {
@@ -149,21 +161,37 @@ class _PlaceFormState extends State<PlaceForm> {
               // Close the Alertdialog way before starting the upload process
               Navigator.pop(context);
 
-              // Trigger image selection if not yet selected
-              // then getn the image download urls as list in imageUrls variable
-              List<String> imageUrls = await uploadImages(
-                  imageFiles.isEmpty ? await selectImages() : imageFiles,
-                  'places',
-                  nameController.text);
+              // Time to save to firebase
 
-              // Now time to save everything into firestore database
-              saveToFireStore(Place(
-                  name: nameController.text,
-                  description: descriptionController.text,
-                  imageUrls: imageUrls));
+              // save a new place
+              if (widget.place == null) {
+                // Trigger image selection if not yet selected
+                // then getn the image download urls as list in imageUrls variable
+                List<String> imageUrls = await uploadImages(
+                    imageFiles.isEmpty ? await selectImages() : imageFiles,
+                    'places',
+                    nameController.text);
+
+                // Now time to save everything into firestore database
+                saveToFireStore(Place(
+                    name: nameController.text,
+                    description: descriptionController.text,
+                    imageUrls: imageUrls));
+              }
+              // save an edit to the existiong place
+              else {
+                FirebaseFirestore.instance
+                    .collection("places")
+                    .doc(widget.place?.id)
+                    .set(Place(
+                      name: nameController.text,
+                      description: descriptionController.text,
+                      imageUrls: [...?widget.place?.imageUrls],
+                    ).toFirestore());
+              }
             }
           },
-          child: const Text('Add new Place'),
+          child: Text(widget.place == null ? 'Add new Place' : 'Save Edit'),
         ),
       ],
       content: Form(
@@ -192,13 +220,15 @@ class _PlaceFormState extends State<PlaceForm> {
                     : null;
               },
             ),
-            ElevatedButton(
-                onPressed: () async {
-                  if (_formKey.currentState!.validate()) {
-                    imageFiles = await selectImages();
-                  }
-                },
-                child: const Text("Select Images"))
+            widget.place == null
+                ? ElevatedButton(
+                    onPressed: () async {
+                      if (_formKey.currentState!.validate()) {
+                        imageFiles = await selectImages();
+                      }
+                    },
+                    child: const Text("Select Images"))
+                : const SizedBox()
           ],
         ),
       ),
