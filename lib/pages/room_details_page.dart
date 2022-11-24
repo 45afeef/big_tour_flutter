@@ -1,4 +1,5 @@
 import 'package:big_tour/data/room.dart';
+import 'package:big_tour/general/global_variable.dart';
 import 'package:big_tour/widgets/facilities.dart';
 import 'package:big_tour/helpers/url_lancher.dart';
 import 'package:big_tour/pages/gallary.dart';
@@ -21,42 +22,60 @@ class RoomDetailsPage extends StatelessWidget {
           },
           builder: (context) {
             return Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      "\$${room.price}",
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    Text(
-                      "/day",
-                      style: Theme.of(context).textTheme.bodySmall,
-                    ),
-                  ],
-                ),
-                ElevatedButton(
-                  onPressed: () => {makePhoneCall("7558009733")},
-                  child: Row(
-                    children: const [
-                      Icon(Icons.call),
-                      Text("Call to book now"),
+                const Spacer(flex: 1),
+                Expanded(
+                  flex: 3,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      HybridTextEditable(
+                        text: "\$${room.price}",
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      HybridTextEditable(
+                        text: "/day",
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
                     ],
                   ),
                 ),
-                ElevatedButton(
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(
-                        const Color(0xff00a884)),
+                const Spacer(flex: 1),
+                Expanded(
+                  flex: 3,
+                  child: ElevatedButton(
+                    onPressed: () => {
+                      makePhoneCall(isAdmin
+                          ? room.phoneNumbers.elementAt(0)
+                          : "7558009733")
+                    },
+                    child: Row(
+                      children: const [
+                        Icon(Icons.call),
+                        Text("Call to book now"),
+                      ],
+                    ),
                   ),
-                  onPressed: () => {sendToWhatsApp()},
-                  child: Row(
-                    children: const [
-                      Icon(Icons.send),
-                      Text("WhatsApp"),
-                    ],
+                ),
+                const Spacer(flex: 1),
+                Expanded(
+                  flex: 3,
+                  child: ElevatedButton(
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all<Color>(
+                          const Color(0xff00a884)),
+                    ),
+                    onPressed: () => {sendToWhatsApp()},
+                    child: Row(
+                      children: const [
+                        Icon(Icons.send),
+                        Text("WhatsApp"),
+                      ],
+                    ),
                   ),
+                ),
+                const Spacer(
+                  flex: 1,
                 ),
               ],
             );
@@ -78,8 +97,8 @@ class RoomDetailsPage extends StatelessWidget {
               const SizedBox(
                 height: 20,
               ),
-              Text(
-                room.name,
+              HybridTextEditable(
+                text: room.name,
                 style: Theme.of(context).textTheme.headline2,
               ),
               Row(
@@ -109,10 +128,68 @@ class RoomDetailsPage extends StatelessWidget {
               const Facilities(size: 60),
               const SizedBox(height: 20),
               Text("Description", style: Theme.of(context).textTheme.headline6),
-              Text(room.description,
+              HybridTextEditable(
+                  text: room.description,
                   style: Theme.of(context).textTheme.bodyText1),
+              const SizedBox(height: 200),
             ],
           ),
         ));
+  }
+}
+
+class HybridTextEditable extends StatefulWidget {
+  const HybridTextEditable(
+      {Key? key,
+      this.text,
+      this.hintText = "Enter here",
+      this.style,
+      this.validator})
+      : super(key: key);
+
+  final String? text;
+  final String hintText;
+  final TextStyle? style;
+  final String? Function(String?)? validator;
+
+  @override
+  State<HybridTextEditable> createState() => _HybridTextEditableState();
+}
+
+class _HybridTextEditableState extends State<HybridTextEditable> {
+  late TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize the controllers when the widget is first initialized.
+    _controller = TextEditingController(text: widget.text);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    // Clean up the controller when the widget is disposed.
+    _controller.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return isAdmin
+        ? TextFormField(
+            controller: _controller,
+            decoration: InputDecoration(hintText: widget.hintText),
+            style: widget.style,
+            validator: widget.validator ??
+                (String? value) {
+                  return (value == null || value.isEmpty)
+                      ? 'Please enter room name'
+                      : null;
+                },
+          )
+        : Text(
+            widget.text ?? "",
+            style: widget.style,
+          );
   }
 }
