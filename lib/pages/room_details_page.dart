@@ -1,5 +1,6 @@
 import 'package:big_tour/data/room.dart';
 import 'package:big_tour/general/global_variable.dart';
+import 'package:big_tour/helpers/location.dart';
 import 'package:big_tour/widgets/facilities.dart';
 import 'package:big_tour/helpers/url_lancher.dart';
 import 'package:big_tour/pages/gallary.dart';
@@ -109,7 +110,7 @@ class RoomDetailsPage extends StatelessWidget {
                     color: Colors.amber,
                   ),
                   InkWell(
-                    onTap: (() => _openLocationSelector()),
+                    onTap: (() => _getLocation()),
                     child: Text(
                       room.locationName,
                       style: Theme.of(context).textTheme.bodySmall,
@@ -141,7 +142,7 @@ class RoomDetailsPage extends StatelessWidget {
         ));
   }
 
-  _openLocationSelector() async {
+  _getLocation() async {
     Location location = Location();
 
     // Check location serviceEnabled
@@ -171,6 +172,12 @@ class RoomDetailsPage extends StatelessWidget {
 
     // call getLocation to get the current location
     LocationData locationData = await location.getLocation();
+
+    String pinnedPlaceLink =
+        "https://www.google.com/maps/place/${decimalDegreesToDMS(locationData.latitude)}N+${decimalDegreesToDMS(locationData.longitude)}E";
+    String morePreciseWithZoom = "/@11.6276889,76.0836722,18z/";
+
+    launchInBrowser(Uri.parse("$pinnedPlaceLink$morePreciseWithZoom"));
   }
 }
 
