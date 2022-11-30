@@ -4,6 +4,7 @@ import 'package:big_tour/widgets/facilities.dart';
 import 'package:big_tour/helpers/url_lancher.dart';
 import 'package:big_tour/pages/gallary.dart';
 import 'package:flutter/material.dart';
+import 'package:location/location.dart';
 
 class RoomDetailsPage extends StatelessWidget {
   const RoomDetailsPage(
@@ -107,9 +108,12 @@ class RoomDetailsPage extends StatelessWidget {
                     Icons.location_on,
                     color: Colors.amber,
                   ),
-                  Text(
-                    room.locationName,
-                    style: Theme.of(context).textTheme.bodySmall,
+                  InkWell(
+                    onTap: (() => _openLocationSelector()),
+                    child: Text(
+                      room.locationName,
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
                   ),
                   const Spacer(),
                   const Icon(
@@ -135,6 +139,38 @@ class RoomDetailsPage extends StatelessWidget {
             ],
           ),
         ));
+  }
+
+  _openLocationSelector() async {
+    Location location = Location();
+
+    // Check location serviceEnabled
+    // wait to enable the location service
+    bool serviceEnabled = await location.serviceEnabled();
+    if (!serviceEnabled) {
+      // As the location service is not enabled for the app
+      // We can request the location service now
+      serviceEnabled = await location.requestService();
+      if (!serviceEnabled) {
+        // Do nothing follows, if the request denied
+        return;
+      }
+    }
+
+    // Ask for location permission
+    // check the current allowed permission
+    PermissionStatus permissionGranted = await location.hasPermission();
+    if (permissionGranted == PermissionStatus.denied) {
+      // request access using requestPermission as permission not granted
+      permissionGranted = await location.requestPermission();
+      if (permissionGranted != PermissionStatus.granted) {
+        // Do nothing follows, if the request denied
+        return;
+      }
+    }
+
+    // call getLocation to get the current location
+    LocationData locationData = await location.getLocation();
   }
 }
 

@@ -1,9 +1,9 @@
 import 'package:big_tour/data/room.dart';
+import 'package:big_tour/general/global_variable.dart';
 import 'package:big_tour/helpers/comon.dart';
 import 'package:big_tour/widgets/facilities.dart';
 import 'package:big_tour/pages/room_details_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_ui_firestore/firebase_ui_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -17,18 +17,17 @@ class RoomPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("Rooms in wayanad")),
-      floatingActionButton:
-          FirebaseAuth.instance.currentUser?.phoneNumber == "+917558009733"
-              ? FloatingActionButton(
-                  tooltip: 'Add new room',
-                  child: const Icon(Icons.add_business_rounded),
-                  onPressed: () => showDialog(
-                    barrierDismissible: false,
-                    context: context,
-                    builder: (_) => const RoomForm(),
-                  ),
-                )
-              : const SizedBox(),
+      floatingActionButton: isAdmin
+          ? FloatingActionButton(
+              tooltip: 'Add new room',
+              child: const Icon(Icons.add_business_rounded),
+              onPressed: () => showDialog(
+                barrierDismissible: false,
+                context: context,
+                builder: (_) => const RoomForm(),
+              ),
+            )
+          : const SizedBox(),
       body: Center(
         child: FirestoreListView<Room>(
           query: FirebaseFirestore.instance
@@ -240,13 +239,22 @@ class _RoomFormState extends State<RoomForm> {
     super.dispose();
   }
 
+  void _close() {
+    Navigator.pop(context);
+  }
+
+  void _accept() {
+    Navigator.pop(context, true); // dialog returns true
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text("Add new room"),
       actions: [
         TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => _accept(), 
             child: const Text("Cancel")),
         ElevatedButton(
           onPressed: () async {
@@ -256,7 +264,7 @@ class _RoomFormState extends State<RoomForm> {
             if (_formKey.currentState!.validate()) {
               // Now time to save everything into firestore database
 
-               // save a new room
+              // save a new room
               if (widget.room == null) {
                 // Trigger image selection if not yet selected
                 if (imageFiles.isEmpty) imageFiles = await selectImages();
@@ -264,7 +272,7 @@ class _RoomFormState extends State<RoomForm> {
                 // Stop working this block if no image is selected
                 if (imageFiles.isEmpty) return;
                 // Close the Alertdialog way before starting the upload process
-                Navigator.pop(context);
+                _close();
 
                 // then getn the image download urls as list in imageUrls variable
                 List<String> imageUrls = await uploadImages(

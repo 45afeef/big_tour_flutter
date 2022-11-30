@@ -3,6 +3,8 @@
 
     <!-- Request needed permissions -->
    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+   <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+   <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>
 
    <application
         android:label="big_tour"

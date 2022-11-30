@@ -2,6 +2,14 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+
+ <!-- 
+	This is probably the only one you need. Background location is supported
+	by this - the caveat is that a blue badge is shown in the status bar
+	when the app is using location service while in the background.
+	-->
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>We need location permission, so we can guide you faster to the right place</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>We need to request your permission to read your photos to load them into the app.</string>
 	<key>CFBundleDevelopmentRegion</key>

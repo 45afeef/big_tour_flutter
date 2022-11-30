@@ -52,6 +52,7 @@ dependencies:
   firebase_storage: ^11.0.5
   firebase_ui_auth: ^1.0.5
   firebase_ui_firestore: ^1.0.5
+  location: ^4.4.0
 
   #State Management
 
