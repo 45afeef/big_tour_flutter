@@ -112,7 +112,7 @@ class RoomDetailsPage extends StatelessWidget {
                   InkWell(
                     onTap: (() => _getLocation()),
                     child: Text(
-                      room.locationName,
+                      room.location.name,
                       style: Theme.of(context).textTheme.bodySmall,
                     ),
                   ),

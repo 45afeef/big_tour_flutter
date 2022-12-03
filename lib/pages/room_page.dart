@@ -91,7 +91,7 @@ class RoomItem extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                room.locationName,
+                                room.location.name,
                                 style: Theme.of(context).textTheme.bodySmall,
                               ),
                               Text(room.name,
@@ -200,6 +200,8 @@ class _RoomFormState extends State<RoomForm> {
   late TextEditingController descriptionController;
   late TextEditingController phoneNumbersController;
   late TextEditingController locationNameController;
+  late TextEditingController latitudeController;
+  late TextEditingController longitudeController;
   late TextEditingController facilitiesController;
   late TextEditingController ratingController;
 
@@ -218,7 +220,11 @@ class _RoomFormState extends State<RoomForm> {
     phoneNumbersController =
         TextEditingController(text: widget.room?.phoneNumbers.first);
     locationNameController =
-        TextEditingController(text: widget.room?.locationName);
+        TextEditingController(text: widget.room?.location.name);
+    latitudeController =
+        TextEditingController(text: widget.room?.location.latitude.toString());
+    longitudeController =
+        TextEditingController(text: widget.room?.location.longitude.toString());
     facilitiesController =
         TextEditingController(text: widget.room?.facilities.first);
     ratingController =
@@ -233,6 +239,8 @@ class _RoomFormState extends State<RoomForm> {
     descriptionController.dispose();
     phoneNumbersController.dispose();
     locationNameController.dispose();
+    latitudeController.dispose();
+    longitudeController.dispose();
     facilitiesController.dispose();
     ratingController.dispose();
 
@@ -247,15 +255,12 @@ class _RoomFormState extends State<RoomForm> {
     Navigator.pop(context, true); // dialog returns true
   }
 
-
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text("Add new room"),
       actions: [
-        TextButton(
-            onPressed: () => _accept(), 
-            child: const Text("Cancel")),
+        TextButton(onPressed: () => _accept(), child: const Text("Cancel")),
         ElevatedButton(
           onPressed: () async {
             // Validate will return true if the form is valid, or false if
@@ -284,7 +289,10 @@ class _RoomFormState extends State<RoomForm> {
                     price: double.parse(priceController.text),
                     description: descriptionController.text,
                     phoneNumbers: [phoneNumbersController.text],
-                    locationName: locationNameController.text,
+                    location: CustomBigooitLocation(
+                        locationNameController.text,
+                        double.parse(latitudeController.text),
+                        double.parse(longitudeController.text)),
                     // TODO: make check box like multiple selection for facilities
                     facilities: [facilitiesController.text],
                     images: imageUrls,
@@ -304,7 +312,10 @@ class _RoomFormState extends State<RoomForm> {
                       price: double.parse(priceController.text),
                       description: descriptionController.text,
                       phoneNumbers: [phoneNumbersController.text],
-                      locationName: locationNameController.text,
+                      location: CustomBigooitLocation(
+                          locationNameController.text,
+                          double.parse(latitudeController.text),
+                          double.parse(longitudeController.text)),
                       facilities: [facilitiesController.text],
                       images: [...?widget.room?.images],
                       rating: double.parse(ratingController.text),
@@ -366,10 +377,30 @@ class _RoomFormState extends State<RoomForm> {
                   keyboardType: TextInputType.name,
                   controller: locationNameController,
                   decoration:
-                      const InputDecoration(hintText: 'Where is the location'),
+                      const InputDecoration(hintText: 'Name of your location'),
                   validator: (String? value) {
                     return (value == null || value.isEmpty)
                         ? 'Please enter your location'
+                        : null;
+                  }),
+              TextFormField(
+                  keyboardType: TextInputType.number,
+                  controller: latitudeController,
+                  decoration: const InputDecoration(
+                      hintText: 'Latitude starts with 11'),
+                  validator: (String? value) {
+                    return (value == null || value.isEmpty)
+                        ? 'Please enter your Latitude'
+                        : null;
+                  }),
+              TextFormField(
+                  keyboardType: TextInputType.number,
+                  controller: longitudeController,
+                  decoration: const InputDecoration(
+                      hintText: 'Longitude starts with 17'),
+                  validator: (String? value) {
+                    return (value == null || value.isEmpty)
+                        ? 'Please enter your Longitude'
                         : null;
                   }),
               // Room facilities
