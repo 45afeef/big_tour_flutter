@@ -279,7 +279,7 @@ class _RoomFormState extends State<RoomForm> {
                 // Close the Alertdialog way before starting the upload process
                 _close();
 
-                // then getn the image download urls as list in imageUrls variable
+                // then get the image download urls as list in imageUrls variable
                 List<String> imageUrls = await uploadImages(
                     imageFiles, 'rooms', nameController.text);
 

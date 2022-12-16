@@ -4,8 +4,11 @@ import 'package:big_tour/helpers/location.dart';
 import 'package:big_tour/widgets/facilities.dart';
 import 'package:big_tour/helpers/url_lancher.dart';
 import 'package:big_tour/pages/gallary.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
+
+import '../helpers/firebase.dart';
 
 class RoomDetailsPage extends StatelessWidget {
   const RoomDetailsPage(
@@ -18,12 +21,30 @@ class RoomDetailsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        floatingActionButton: isAdmin
+            ? FloatingActionButton(
+                tooltip: 'Save resort in cloud',
+                child: const Icon(Icons.upload),
+                onPressed: () async {
+                  List<String> imageUrls = await uploadImages(
+                    await selectImages(),
+                    'rooms',
+                    room.name,
+                  );
+                  FirebaseFirestore.instance
+                      .collection("rooms")
+                      .doc(room.id)
+                      .update({"images": FieldValue.arrayUnion(imageUrls)});
+                },
+              )
+            : const SizedBox(),
         bottomSheet: BottomSheet(
           onClosing: () {
             //  Do what you wanna do when the bottom sheet closes.
           },
           builder: (context) {
             return Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 const Spacer(flex: 1),
                 Expanded(
@@ -94,6 +115,17 @@ class RoomDetailsPage extends StatelessWidget {
                 onTap: () => {
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) => Gallary(room.images)))
+                },
+                addNewImage: () async {
+                  List<String> imageUrls = await uploadImages(
+                    await selectImages(),
+                    'rooms',
+                    room.name,
+                  );
+                  FirebaseFirestore.instance
+                      .collection("rooms")
+                      .doc(room.id)
+                      .update({"images": FieldValue.arrayUnion(imageUrls)});
                 },
               ),
               const SizedBox(

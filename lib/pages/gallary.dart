@@ -9,12 +9,14 @@ class Gallary extends StatefulWidget {
     this.bottomPosition = 0,
     this.onTap,
     this.isSquare = false,
+    this.addNewImage,
     super.key,
   });
 
   final List<String> images;
   final double bottomPosition;
   final Function()? onTap;
+  final Function()? addNewImage;
   final bool isSquare;
 
   @override
@@ -54,6 +56,7 @@ class _GallaryState extends State<Gallary> {
               widget.images.sublist(0, min(5, widget.images.length)),
               onSelect: (selectedIndex) =>
                   {setState(() => currentImage = widget.images[selectedIndex])},
+              addNewImage: widget.addNewImage,
             ))
       ],
     );

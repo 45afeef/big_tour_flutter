@@ -1,11 +1,17 @@
+import 'package:big_tour/general/global_variable.dart';
 import 'package:flutter/material.dart';
 
 class ImageList extends StatefulWidget {
-  const ImageList(this.images, {Key? key, required this.onSelect})
-      : super(key: key);
+  const ImageList(
+    this.images, {
+    Key? key,
+    required this.onSelect,
+    this.addNewImage,
+  }) : super(key: key);
 
   final List<String> images;
   final Function(int selectionIndex) onSelect;
+  final Function()? addNewImage;
 
   @override
   State<ImageList> createState() => _ImageListState();
@@ -23,8 +29,8 @@ class _ImageListState extends State<ImageList> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: widget.images
+    return Row(children: [
+      ...widget.images
           .asMap()
           .map((i, imageUrl) => MapEntry(
               i,
@@ -51,8 +57,25 @@ class _ImageListState extends State<ImageList> {
                   ),
                 ),
               )))
-          .values
-          .toList(),
-    );
+          .values,
+      isAdmin
+          ? GestureDetector(
+              onTap: widget.addNewImage,
+              child: Card(
+                margin: const EdgeInsets.all(10),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15)),
+                elevation: 3,
+                child: const Padding(
+                  padding: EdgeInsets.all(5.0),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.all(Radius.circular(15)),
+                    child: Icon(Icons.add),
+                  ),
+                ),
+              ),
+            )
+          : const SizedBox(),
+    ]);
   }
 }
