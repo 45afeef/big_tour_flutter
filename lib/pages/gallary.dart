@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:big_tour/general/global_variable.dart';
 import 'package:big_tour/widgets/image_list.dart';
 import "package:flutter/material.dart";
 
@@ -9,6 +10,7 @@ class Gallary extends StatefulWidget {
     this.bottomPosition = 0,
     this.onTap,
     this.isSquare = false,
+    this.onLongPress,
     this.addNewImage,
     super.key,
   });
@@ -16,6 +18,7 @@ class Gallary extends StatefulWidget {
   final List<String> images;
   final double bottomPosition;
   final Function()? onTap;
+  final Function(String selectedImageIndex)? onLongPress;
   final Function()? addNewImage;
   final bool isSquare;
 
@@ -35,6 +38,7 @@ class _GallaryState extends State<Gallary> {
   Widget build(BuildContext context) {
     Widget imageView = GestureDetector(
       onTap: widget.onTap,
+      onLongPress: isAdmin ? () => widget.onLongPress!(currentImage) : null,
       child: Image.network(currentImage, fit: BoxFit.cover),
     );
 

@@ -1,5 +1,6 @@
 import 'package:big_tour/data/room.dart';
 import 'package:big_tour/general/global_variable.dart';
+import 'package:big_tour/helpers/comon.dart';
 import 'package:big_tour/helpers/location.dart';
 import 'package:big_tour/widgets/facilities.dart';
 import 'package:big_tour/helpers/url_lancher.dart';
@@ -24,18 +25,10 @@ class RoomDetailsPage extends StatelessWidget {
         floatingActionButton: isAdmin
             ? FloatingActionButton(
                 tooltip: 'Save resort in cloud',
+                onPressed: (() {
+                  showToast(context, "I will add this soon");
+                }),
                 child: const Icon(Icons.upload),
-                onPressed: () async {
-                  List<String> imageUrls = await uploadImages(
-                    await selectImages(),
-                    'rooms',
-                    room.name,
-                  );
-                  FirebaseFirestore.instance
-                      .collection("rooms")
-                      .doc(room.id)
-                      .update({"images": FieldValue.arrayUnion(imageUrls)});
-                },
               )
             : const SizedBox(),
         bottomSheet: BottomSheet(
@@ -112,6 +105,31 @@ class RoomDetailsPage extends StatelessWidget {
                 room.images,
                 bottomPosition: -15,
                 isSquare: true,
+                onLongPress: ((selectedImageIndex) => showDialog(
+                    context: context,
+                    builder: (_) => AlertDialog(
+                          content: const Text(
+                              "You can either edit or delete the room here"),
+                          actions: [
+                            TextButton(
+                                onPressed: () => {
+                                      Navigator.pop(context),
+                                      // Delete the selected image from image list that is stored in firestore
+                                      FirebaseFirestore.instance
+                                          .collection("rooms")
+                                          .doc(room.id)
+                                          .update({
+                                        "images": FieldValue.arrayRemove(
+                                            [selectedImageIndex])
+                                      }).then((value) => showToast(context,
+                                              "The Image is just deleted"))
+                                    },
+                                child: const Text("Delete")),
+                            ElevatedButton(
+                                onPressed: () => Navigator.pop(context),
+                                child: const Text("Cancel and Go Back"))
+                          ],
+                        ))),
                 onTap: () => {
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) => Gallary(room.images)))
