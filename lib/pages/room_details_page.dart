@@ -2,7 +2,7 @@ import 'package:big_tour/data/room.dart';
 import 'package:big_tour/general/global_variable.dart';
 import 'package:big_tour/helpers/comon.dart';
 import 'package:big_tour/helpers/location.dart';
-import 'package:big_tour/widgets/facilities.dart';
+import 'package:big_tour/widgets/activity_list.dart';
 import 'package:big_tour/helpers/url_lancher.dart';
 import 'package:big_tour/pages/gallary.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -39,9 +39,8 @@ class RoomDetailsPage extends StatelessWidget {
             return Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                const Spacer(flex: 1),
-                Expanded(
-                  flex: 3,
+                SizedBox(
+                  width: 50,
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -56,42 +55,30 @@ class RoomDetailsPage extends StatelessWidget {
                     ],
                   ),
                 ),
-                const Spacer(flex: 1),
-                Expanded(
-                  flex: 3,
-                  child: ElevatedButton(
-                    onPressed: () => {
-                      makePhoneCall(isAdmin
-                          ? room.phoneNumbers.elementAt(0)
-                          : "7558009733")
-                    },
-                    child: Row(
-                      children: const [
-                        Icon(Icons.call),
-                        Text("Call to book now"),
-                      ],
-                    ),
+                ElevatedButton(
+                  onPressed: () => {
+                    makePhoneCall(
+                        isAdmin ? room.phoneNumbers.elementAt(0) : "7558009733")
+                  },
+                  child: Row(
+                    children: const [
+                      Icon(Icons.call),
+                      Text("Call to book now"),
+                    ],
                   ),
                 ),
-                const Spacer(flex: 1),
-                Expanded(
-                  flex: 3,
-                  child: ElevatedButton(
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all<Color>(
-                          const Color(0xff00a884)),
-                    ),
-                    onPressed: () => {sendToWhatsApp()},
-                    child: Row(
-                      children: const [
-                        Icon(Icons.send),
-                        Text("WhatsApp"),
-                      ],
-                    ),
+                ElevatedButton(
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                        const Color(0xff00a884)),
                   ),
-                ),
-                const Spacer(
-                  flex: 1,
+                  onPressed: () => {sendToWhatsApp()},
+                  child: Row(
+                    children: const [
+                      Icon(Icons.send),
+                      Text("WhatsApp"),
+                    ],
+                  ),
                 ),
               ],
             );
@@ -180,7 +167,11 @@ class RoomDetailsPage extends StatelessWidget {
               const Divider(),
               const SizedBox(height: 20),
               Text("Faciliteis", style: Theme.of(context).textTheme.headline6),
-              const Facilities(size: 60),
+              Text("Activities", style: Theme.of(context).textTheme.headline6),
+              Activities(
+                size: 60,
+                activities: {ActivityType.campfire, ActivityType.hiking},
+              ),
               const SizedBox(height: 20),
               Text("Description", style: Theme.of(context).textTheme.headline6),
               HybridTextEditable(

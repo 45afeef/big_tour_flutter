@@ -1,7 +1,7 @@
 import 'package:big_tour/data/room.dart';
 import 'package:big_tour/general/global_variable.dart';
 import 'package:big_tour/helpers/comon.dart';
-import 'package:big_tour/widgets/facilities.dart';
+import 'package:big_tour/widgets/activity_list.dart';
 import 'package:big_tour/pages/room_details_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_ui_firestore/firebase_ui_firestore.dart';
@@ -112,7 +112,7 @@ class RoomItem extends StatelessWidget {
                         )
                       ],
                     ),
-                    const Facilities(size: 30),
+                    Activities(size: 30, activities: {}),
                     const Divider(),
                     Text(
                       room.description,
