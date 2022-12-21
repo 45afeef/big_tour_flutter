@@ -34,18 +34,17 @@ class PlacesPage extends StatelessWidget {
           },
         ),
       ),
-      floatingActionButton:
-          isAdmin
-              ? FloatingActionButton(
-                  onPressed: () => showDialog(
-                    barrierDismissible: false,
-                    context: context,
-                    builder: (_) => const PlaceForm(),
-                  ),
-                  tooltip: 'Add new place',
-                  child: const Icon(Icons.add_location_alt_outlined),
-                )
-              : const SizedBox(),
+      floatingActionButton: isAdmin
+          ? FloatingActionButton(
+              onPressed: () => showDialog(
+                barrierDismissible: false,
+                context: context,
+                builder: (_) => const PlaceForm(),
+              ),
+              tooltip: 'Add new place',
+              child: const Icon(Icons.add_location_alt_outlined),
+            )
+          : const SizedBox(),
     );
   }
 }
@@ -155,8 +154,7 @@ class _PlaceFormState extends State<PlaceForm> {
             child: const Text("Cancel")),
         ElevatedButton(
           onPressed: () async {
-            // Validate will return true if the form is valid, or false if
-            // the form is invalid.
+            // Validate the form. This will make use of individual validation declared in every input field
             if (_formKey.currentState!.validate()) {
               // Close the Alertdialog way before starting the upload process
               Navigator.pop(context);
@@ -220,6 +218,8 @@ class _PlaceFormState extends State<PlaceForm> {
                     : null;
               },
             ),
+            // show "Select Images" button only if there is no already selected images are available
+            // whcih means the "Select Images" button will show only while creating room and not while editing
             widget.place == null
                 ? ElevatedButton(
                     onPressed: () async {

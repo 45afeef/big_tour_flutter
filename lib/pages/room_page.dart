@@ -69,6 +69,7 @@ class RoomItem extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 15),
           child: Row(
             children: [
+              // Square Image box
               SizedBox.square(
                 dimension: 130,
                 child: ClipRRect(
@@ -79,10 +80,12 @@ class RoomItem extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 14),
+              // Contents
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // Heading, Location, Favourite button
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -112,8 +115,13 @@ class RoomItem extends StatelessWidget {
                         )
                       ],
                     ),
-                    Activities(size: 30, activities: {}),
+                    // Activities
+                    Activities(
+                      size: 30,
+                      activities: room.activities,
+                    ),
                     const Divider(),
+                    // Description
                     Text(
                       room.description,
                       // "4-6 guests . Entire Home . 5 beds  . Wifi . Kitchen . 3 bathroom . Free Parking",
@@ -122,19 +130,23 @@ class RoomItem extends StatelessWidget {
                       style: Theme.of(context).textTheme.bodySmall,
                     ),
                     const Divider(),
+                    // Footer with rating and price information
                     Row(
                       children: [
+                        // Star Icon
                         const Icon(
                           Icons.star,
                           color: Colors.amber,
                         ),
+                        // Ratings
                         Text(
                           room.rating.toString(),
                           style: Theme.of(context).textTheme.bodySmall,
                         ),
                         const Spacer(),
+                        // Price
                         Text(
-                          "\$${room.price}",
+                          "₹ ${room.price}",
                           style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
                         Text(
@@ -202,7 +214,6 @@ class _RoomFormState extends State<RoomForm> {
   late TextEditingController locationNameController;
   late TextEditingController latitudeController;
   late TextEditingController longitudeController;
-  late TextEditingController facilitiesController;
   late TextEditingController ratingController;
 
   List<XFile> imageFiles = [];
@@ -225,8 +236,6 @@ class _RoomFormState extends State<RoomForm> {
         TextEditingController(text: widget.room?.location.latitude.toString());
     longitudeController =
         TextEditingController(text: widget.room?.location.longitude.toString());
-    facilitiesController =
-        TextEditingController(text: widget.room?.facilities.first);
     ratingController =
         TextEditingController(text: widget.room?.rating.toString());
   }
@@ -241,7 +250,6 @@ class _RoomFormState extends State<RoomForm> {
     locationNameController.dispose();
     latitudeController.dispose();
     longitudeController.dispose();
-    facilitiesController.dispose();
     ratingController.dispose();
 
     super.dispose();
@@ -286,15 +294,14 @@ class _RoomFormState extends State<RoomForm> {
                 saveToFireStore(
                   Room(
                     name: nameController.text,
-                    price: double.parse(priceController.text),
+                    price: int.parse(priceController.text),
                     description: descriptionController.text,
                     phoneNumbers: [phoneNumbersController.text],
                     location: CustomBigooitLocation(
                         locationNameController.text,
                         double.parse(latitudeController.text),
                         double.parse(longitudeController.text)),
-                    // TODO: make check box like multiple selection for facilities
-                    facilities: [facilitiesController.text],
+                    activities: {},
                     images: imageUrls,
                     rating: double.parse(ratingController.text),
                   ),
@@ -309,14 +316,14 @@ class _RoomFormState extends State<RoomForm> {
                     .doc(widget.room?.id)
                     .set(Room(
                       name: nameController.text,
-                      price: double.parse(priceController.text),
+                      price: int.parse(priceController.text),
                       description: descriptionController.text,
                       phoneNumbers: [phoneNumbersController.text],
                       location: CustomBigooitLocation(
                           locationNameController.text,
                           double.parse(latitudeController.text),
                           double.parse(longitudeController.text)),
-                      facilities: [facilitiesController.text],
+                      activities: {},
                       images: [...?widget.room?.images],
                       rating: double.parse(ratingController.text),
                     ).toFirestore());
@@ -345,7 +352,9 @@ class _RoomFormState extends State<RoomForm> {
               // Room Description
               TextFormField(
                 controller: descriptionController,
-                decoration: const InputDecoration(hintText: 'Room description'),
+                decoration: const InputDecoration(
+                    hintText: 'Room description',
+                    icon: Icon(Icons.description)),
                 validator: (String? value) {
                   return (value == null || value.isEmpty)
                       ? 'Please enter room description'
@@ -356,7 +365,9 @@ class _RoomFormState extends State<RoomForm> {
               TextFormField(
                   keyboardType: TextInputType.number,
                   controller: priceController,
-                  decoration: const InputDecoration(hintText: 'Price eg. 320'),
+                  decoration: const InputDecoration(
+                      hintText: 'Price eg. 320',
+                      icon: Icon(Icons.monetization_on)),
                   validator: (String? value) {
                     return (value == null || value.isEmpty)
                         ? 'Please enter valid price'
@@ -366,7 +377,8 @@ class _RoomFormState extends State<RoomForm> {
               TextFormField(
                   keyboardType: TextInputType.phone,
                   controller: phoneNumbersController,
-                  decoration: const InputDecoration(hintText: 'Phone Number'),
+                  decoration: const InputDecoration(
+                      hintText: 'Phone Number', icon: Icon(Icons.phone)),
                   validator: (String? value) {
                     return (value == null || value.isEmpty)
                         ? 'Please enter Phone Number'
@@ -376,13 +388,15 @@ class _RoomFormState extends State<RoomForm> {
               TextFormField(
                   keyboardType: TextInputType.name,
                   controller: locationNameController,
-                  decoration:
-                      const InputDecoration(hintText: 'Name of your location'),
+                  decoration: const InputDecoration(
+                      hintText: 'Name of your location',
+                      icon: Icon(Icons.location_on)),
                   validator: (String? value) {
                     return (value == null || value.isEmpty)
                         ? 'Please enter your location'
                         : null;
                   }),
+              // Latitude
               TextFormField(
                   keyboardType: TextInputType.number,
                   controller: latitudeController,
@@ -393,6 +407,7 @@ class _RoomFormState extends State<RoomForm> {
                         ? 'Please enter your Latitude'
                         : null;
                   }),
+              // Longitute
               TextFormField(
                   keyboardType: TextInputType.number,
                   controller: longitudeController,
@@ -403,16 +418,12 @@ class _RoomFormState extends State<RoomForm> {
                         ? 'Please enter your Longitude'
                         : null;
                   }),
-              // Room facilities
-              TextFormField(
-                  controller: facilitiesController,
-                  decoration:
-                      const InputDecoration(hintText: 'Facilities available')),
               // Room rating
               TextFormField(
                   keyboardType: TextInputType.number,
                   controller: ratingController,
-                  decoration: const InputDecoration(hintText: 'Stars'),
+                  decoration: const InputDecoration(
+                      hintText: 'Stars', icon: Icon(Icons.star)),
                   validator: (String? value) {
                     return (value == null || value.isEmpty)
                         ? 'Please enter valid rating'

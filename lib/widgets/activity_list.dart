@@ -1,4 +1,3 @@
-import 'package:big_tour/general/global_variable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -29,16 +28,22 @@ enum ActivityType {
 }
 
 class Activities extends StatefulWidget {
-  Activities(
-      {Key? key,
-      required this.size,
-      required this.activities,
-      this.onAddNewActivity})
-      : super(key: key);
+  Activities({
+    Key? key,
+    required this.size,
+    required this.activities,
+    this.onChangeActivity,
+    this.isEditable = false,
+  }) : super(key: key);
 
   final double size;
   Set<ActivityType> activities;
-  final Function()? onAddNewActivity;
+  final void Function(
+    bool changeType, // true for adding and false for removing
+    ActivityType activityType,
+    Set<ActivityType> allActivities,
+  )? onChangeActivity;
+  final bool isEditable;
 
   @override
   State<Activities> createState() => _ActivitiesState();
@@ -65,7 +70,7 @@ class _ActivitiesState extends State<Activities> {
             );
 
             // trigger Activity deletion if admin or show only a toop tip
-            return isAdmin
+            return widget.isEditable
                 ? GestureDetector(
                     onLongPress: () => showDialog(
                         context: context,
@@ -77,7 +82,9 @@ class _ActivitiesState extends State<Activities> {
                                     onPressed: () => {
                                           Navigator.pop(context),
                                           setState(() => widget.activities
-                                              .remove(activity))
+                                              .remove(activity)),
+                                          widget.onChangeActivity!(true,
+                                              activity, widget.activities),
                                         },
                                     child: const Text("Yes")),
                                 ElevatedButton(
@@ -92,7 +99,8 @@ class _ActivitiesState extends State<Activities> {
                     child: activityTile,
                   );
           }),
-          isAdmin && widget.activities.length < ActivityType.values.length
+          widget.isEditable &&
+                  widget.activities.length < ActivityType.values.length
               // Select more activities available for the resort
               ? SizedBox(
                   width: widget.size,
@@ -121,6 +129,8 @@ class _ActivitiesState extends State<Activities> {
                     },
                     onSelected: (value) => setState(() => {
                           widget.activities.add(value),
+                          widget.onChangeActivity!(
+                              true, value, widget.activities),
                         }),
                   ),
                 )

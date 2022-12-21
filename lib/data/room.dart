@@ -1,11 +1,13 @@
+import 'package:big_tour/widgets/activity_list.dart';
+
 class Room {
   final String id;
   String name;
-  double price;
+  int price;
   String description;
   List<String> phoneNumbers;
   CustomBigooitLocation location;
-  List<String> facilities;
+  Set<ActivityType> activities;
   List<String> images;
   double? rating;
   bool isAvailable;
@@ -17,7 +19,7 @@ class Room {
     required this.description,
     required this.phoneNumbers,
     required this.location,
-    required this.facilities,
+    required this.activities,
     required this.images,
     this.isAvailable = true,
     this.rating,
@@ -31,7 +33,7 @@ class Room {
         description: "",
         phoneNumbers: [],
         location: CustomBigooitLocation.empty(),
-        facilities: [],
+        activities: {},
         images: []);
   }
 
@@ -44,7 +46,9 @@ class Room {
       description: data.get('description'),
       phoneNumbers: [...data.get('phoneNumbers')],
       location: CustomBigooitLocation.fromMap(data.get('location')),
-      facilities: [...data.get('facilities')],
+      activities: {
+        ...data.get('activities').map((id) => ActivityType.getType(id))
+      },
       images: [...data.get('images')],
       rating: data.get('rating'),
       isAvailable: data.get('isAvailable'),
@@ -61,7 +65,7 @@ class Room {
       'description': description,
       'phoneNumbers': phoneNumbers,
       'location': location.toMap(),
-      'facilities': facilities,
+      'activities': [...activities.map((e) => e.id)],
       'images': images,
       'rating': rating,
       'isAvailable': isAvailable,
