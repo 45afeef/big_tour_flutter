@@ -18,11 +18,9 @@ Future<void> launchInBrowser(Uri url) async {
   }
 }
 
-Future<void> sendToWhatsApp() async {
-  Uri url = Uri(
-      scheme: 'https',
-      host: 'wa.me',
-      queryParameters: {"text": "I'm interested in your car for sale"});
+Future<void> sendToWhatsApp(String message) async {
+  Uri url =
+      Uri(scheme: 'https', host: 'wa.me', queryParameters: {"text": message});
 
   if (!await launchUrl(
     url,

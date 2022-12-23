@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../helpers/firebase.dart';
+import '../widgets/cached_image.dart';
 
 class RoomPage extends StatelessWidget {
   const RoomPage({super.key});
@@ -62,8 +63,11 @@ class RoomItem extends StatelessWidget {
     return Card(
       child: InkWell(
         onTap: (() => {
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => RoomDetailsPage(room)))
+              Navigator.of(context).push(
+                PageRouteBuilder(
+                    pageBuilder: (_, __, ___) => RoomDetailsPage(room),
+                    transitionDuration: const Duration(milliseconds: 800)),
+              )
             }),
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 15),
@@ -72,11 +76,14 @@ class RoomItem extends StatelessWidget {
               // Square Image box
               SizedBox.square(
                 dimension: 130,
-                child: ClipRRect(
-                  borderRadius: const BorderRadius.all(Radius.circular(10)),
-                  child: Image.network(
-                      room.images.isEmpty ? "" : room.images.elementAt(0),
-                      fit: BoxFit.cover),
+                child: Hero(
+                  tag: 'image-${room.images.first}',
+                  child: ClipRRect(
+                    borderRadius: const BorderRadius.all(Radius.circular(10)),
+                    child: CachedImage(
+                      imageUrl: room.images.isEmpty ? "" : room.images.first,
+                    ),
+                  ),
                 ),
               ),
               const SizedBox(width: 14),
@@ -116,18 +123,24 @@ class RoomItem extends StatelessWidget {
                       ],
                     ),
                     // Activities
-                    Activities(
-                      size: 30,
-                      activities: room.activities,
+                    Hero(
+                      tag: 'activity-${room.id}',
+                      child: Activities(
+                        size: 30,
+                        activities: room.activities,
+                      ),
                     ),
                     const Divider(),
                     // Description
-                    Text(
-                      room.description,
-                      // "4-6 guests . Entire Home . 5 beds  . Wifi . Kitchen . 3 bathroom . Free Parking",
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 2,
-                      style: Theme.of(context).textTheme.bodySmall,
+                    Hero(
+                      tag: 'description-${room.id}',
+                      child: Text(
+                        room.description,
+                        // "4-6 guests . Entire Home . 5 beds  . Wifi . Kitchen . 3 bathroom . Free Parking",
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 2,
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
                     ),
                     const Divider(),
                     // Footer with rating and price information

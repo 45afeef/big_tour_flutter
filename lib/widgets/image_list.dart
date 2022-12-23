@@ -1,6 +1,8 @@
 import 'package:big_tour/general/global_variable.dart';
 import 'package:flutter/material.dart';
 
+import 'cached_image.dart';
+
 class ImageList extends StatefulWidget {
   const ImageList(
     this.images, {
@@ -38,7 +40,7 @@ class _ImageListState extends State<ImageList> {
                 onTap: (() => _setSelected(i)),
                 child: Card(
                   margin: const EdgeInsets.all(0),
-                  shape: RoundedRectangleBorder(
+                  shape: RoundedRectangleBorder( 
                       borderRadius: BorderRadius.circular(15)),
                   elevation: 3,
                   color:
@@ -47,11 +49,10 @@ class _ImageListState extends State<ImageList> {
                     padding: const EdgeInsets.all(5.0),
                     child: ClipRRect(
                       borderRadius: const BorderRadius.all(Radius.circular(15)),
-                      child: Image.network(
-                        imageUrl,
+                      child: CachedImage(
+                        imageUrl: imageUrl,
                         width: i == _selected ? 70 : 60,
                         height: i == _selected ? 70 : 60,
-                        fit: BoxFit.cover,
                       ),
                     ),
                   ),

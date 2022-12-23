@@ -24,7 +24,6 @@ class RoomDetailsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-
     return Form(
       key: formKey,
       child: Scaffold(
@@ -98,7 +97,7 @@ class RoomDetailsPage extends StatelessWidget {
                       backgroundColor: MaterialStateProperty.all<Color>(
                           const Color(0xff00a884)),
                     ),
-                    onPressed: () => {sendToWhatsApp()},
+                    onPressed: () => {sendToWhatsApp(room.whatsAppMessage())},
                     child: Row(
                       children: const [
                         Icon(Icons.send),
@@ -217,21 +216,27 @@ class RoomDetailsPage extends StatelessWidget {
                 const SizedBox(height: 20),
                 Text("Activities",
                     style: Theme.of(context).textTheme.headline6),
-                Activities(
-                  size: 60,
-                  activities: room.activities,
-                  onChangeActivity: (_, __, allActivities) =>
-                      room.activities = allActivities,
-                  isEditable: true,
+                Hero(
+                  tag: 'activity-${room.id}',
+                  child: Activities(
+                    size: 60,
+                    activities: room.activities,
+                    onChangeActivity: (_, __, allActivities) =>
+                        room.activities = allActivities,
+                    isEditable: isAdmin,
+                  ),
                 ),
                 const SizedBox(height: 20),
                 Text("Description",
                     style: Theme.of(context).textTheme.headline6),
-                HybridTextEditor(
-                  text: room.description,
-                  style: Theme.of(context).textTheme.bodyText1,
-                  onSaved: (newDescription) =>
-                      room.description = newDescription!,
+                Hero(
+                  tag: 'description-${room.id}',
+                  child: HybridTextEditor(
+                    text: room.description,
+                    style: Theme.of(context).textTheme.bodyText1,
+                    onSaved: (newDescription) =>
+                        room.description = newDescription!,
+                  ),
                 ),
                 const SizedBox(height: 200),
               ],

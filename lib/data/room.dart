@@ -46,6 +46,7 @@ class Room {
       description: data.get('description'),
       phoneNumbers: [...data.get('phoneNumbers')],
       location: CustomBigooitLocation.fromMap(data.get('location')),
+      // Convert back the array of activity ids into set of activities
       activities: {
         ...data.get('activities').map((id) => ActivityType.getType(id))
       },
@@ -65,11 +66,16 @@ class Room {
       'description': description,
       'phoneNumbers': phoneNumbers,
       'location': location.toMap(),
+      // Convert the set of activities into its array of activity ids
       'activities': [...activities.map((e) => e.id)],
       'images': images,
       'rating': rating,
       'isAvailable': isAvailable,
     };
+  }
+
+  String whatsAppMessage() {
+    return "This is the whatsAppMessage";
   }
 }
 

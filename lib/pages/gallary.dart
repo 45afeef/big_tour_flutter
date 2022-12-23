@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:big_tour/general/global_variable.dart';
+import 'package:big_tour/widgets/cached_image.dart';
 import 'package:big_tour/widgets/image_list.dart';
 import "package:flutter/material.dart";
 
@@ -37,30 +38,39 @@ class _GallaryState extends State<Gallary> {
   @override
   Widget build(BuildContext context) {
     Widget imageView = GestureDetector(
-      onTap: widget.onTap,
+      onTap: widget.onTap ?? () => Navigator.pop(context),
       onLongPress: isAdmin ? () => widget.onLongPress!(currentImage) : null,
-      child: Image.network(currentImage, fit: BoxFit.cover),
+      child: CachedImage(
+        imageUrl: currentImage,
+      ),
     );
 
     return Stack(
       alignment: Alignment.center,
       clipBehavior: Clip.none,
       children: [
-        widget.isSquare
-            ? ClipRRect(
-                borderRadius: const BorderRadius.all(Radius.circular(15)),
-                child: AspectRatio(
-                  aspectRatio: 1,
-                  child: imageView,
-                ))
-            : imageView,
+        Hero(
+          tag: 'image-${widget.images.first}',
+          child: widget.isSquare
+              ? ClipRRect(
+                  borderRadius: const BorderRadius.all(Radius.circular(15)),
+                  child: AspectRatio(
+                    aspectRatio: 1,
+                    child: imageView,
+                  ))
+              : imageView,
+        ),
         Positioned(
             bottom: widget.bottomPosition,
-            child: ImageList(
-              widget.images.sublist(0, min(5, widget.images.length)),
-              onSelect: (selectedIndex) =>
-                  {setState(() => currentImage = widget.images[selectedIndex])},
-              addNewImage: widget.addNewImage,
+            child: Hero(
+              tag: 'imageList',
+              child: ImageList(
+                widget.images.sublist(0, min(5, widget.images.length)),
+                onSelect: (selectedIndex) => {
+                  setState(() => currentImage = widget.images[selectedIndex])
+                },
+                addNewImage: widget.addNewImage,
+              ),
             ))
       ],
     );
