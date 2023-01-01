@@ -19,8 +19,8 @@ class CachedImage extends StatelessWidget {
   Widget build(BuildContext context) {
     return CachedNetworkImage(
       imageUrl: imageUrl,
-      progressIndicatorBuilder: (context, url, downloadProgress) =>
-          CircularProgressIndicator(value: downloadProgress.progress),
+      progressIndicatorBuilder: (context, url, downloadProgress) => Center(
+          child: CircularProgressIndicator(value: downloadProgress.progress)),
       errorWidget: (_, __, ___) => const Icon(Icons.error),
       width: width,
       height: height,

@@ -66,7 +66,7 @@ class RoomItem extends StatelessWidget {
               Navigator.of(context).push(
                 PageRouteBuilder(
                     pageBuilder: (_, __, ___) => RoomDetailsPage(room),
-                    transitionDuration: const Duration(milliseconds: 800)),
+                    transitionDuration: const Duration(seconds: 1)),
               )
             }),
         child: Container(

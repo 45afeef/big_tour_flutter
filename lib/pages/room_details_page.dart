@@ -2,14 +2,16 @@ import 'package:big_tour/data/room.dart';
 import 'package:big_tour/general/global_variable.dart';
 import 'package:big_tour/helpers/comon.dart';
 import 'package:big_tour/helpers/location.dart';
-import 'package:big_tour/widgets/hybrid_text_editor.dart';
-import 'package:big_tour/widgets/activity_list.dart';
 import 'package:big_tour/helpers/url_lancher.dart';
 import 'package:big_tour/pages/gallary.dart';
+import 'package:big_tour/widgets/activity_list.dart';
+import 'package:big_tour/widgets/hybrid_text_editor.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:location/location.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../helpers/firebase.dart';
 
@@ -97,7 +99,27 @@ class RoomDetailsPage extends StatelessWidget {
                       backgroundColor: MaterialStateProperty.all<Color>(
                           const Color(0xff00a884)),
                     ),
-                    onPressed: () => {sendToWhatsApp(room.whatsAppMessage())},
+                    onPressed: () async {
+                      List<XFile> xFiles = [];
+
+                      for (var url in room.images) {
+                        var file =
+                            await DefaultCacheManager().getSingleFile(url);
+                        xFiles.add(XFile(file.path));
+                      }
+
+                      String activites = "";
+                      for (var act in room.activities) {
+                        activites += '${act.value}, ';
+                      }
+
+                      Share.shareXFiles(
+                        xFiles,
+                        subject: room.name,
+                        text:
+                            '*${room.name}* \n\n${room.description} \n\n *Facilities* \n$activites',
+                      );
+                    },
                     child: Row(
                       children: const [
                         Icon(Icons.send),
@@ -117,7 +139,7 @@ class RoomDetailsPage extends StatelessWidget {
                   room.images,
                   bottomPosition: -15,
                   isSquare: true,
-                  onLongPress: ((selectedImageIndex) => showDialog(
+                  onLongPress: ((selectedImageUrl) => showDialog(
                       context: context,
                       builder: (_) => AlertDialog(
                             content: const Text(
@@ -132,7 +154,7 @@ class RoomDetailsPage extends StatelessWidget {
                                             .doc(room.id)
                                             .update({
                                           "images": FieldValue.arrayRemove(
-                                              [selectedImageIndex])
+                                              [selectedImageUrl])
                                         }).then((value) => showToast(context,
                                                 "The Image is just deleted"))
                                       },
@@ -143,8 +165,12 @@ class RoomDetailsPage extends StatelessWidget {
                             ],
                           ))),
                   onTap: () => {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => Gallary(room.images)))
+                    Navigator.of(context).push(
+                      PageRouteBuilder(
+                        pageBuilder: (_, __, ___) => Gallary(room.images),
+                        transitionDuration: const Duration(seconds: 1),
+                      ),
+                    )
                   },
                   addNewImage: () async {
                     List<String> imageUrls = await uploadImages(

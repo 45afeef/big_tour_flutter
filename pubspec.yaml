@@ -54,7 +54,8 @@ dependencies:
   firebase_ui_firestore: ^1.0.5
   location: ^4.4.0
   cached_network_image: ^3.2.3
-
+  share_plus: ^6.3.0
+  
   #State Management
 
 dev_dependencies:
