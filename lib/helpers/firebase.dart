@@ -11,9 +11,9 @@ Future<List<XFile>> selectImages() async {
   final imagePicker = ImagePicker();
 
   //Check Permissions
-  await Permission.storage.request();
+  await Permission.photos.request();
 
-  var permissionStatus = await Permission.storage.status;
+  var permissionStatus = await Permission.photos.status;
 
   if (permissionStatus.isGranted) {
     final List<XFile> images = await imagePicker.pickMultiImage();

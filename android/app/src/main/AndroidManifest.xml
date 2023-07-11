@@ -2,7 +2,15 @@
     package="com.example.big_tour">
 
     <!-- Request needed permissions -->
+    
+    <!-- Required only if your app needs to access images or photos that other apps created. -->
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+
+    <!-- Required only if your app needs to access videos that other apps created. -->
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+    
    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+   
    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>
 
