@@ -209,10 +209,6 @@ class RoomDetailsPage extends StatelessWidget {
                         ],
                       ),
                     ),
-                    // Text(
-                    //   room.rating.toString(), //"4.7(9k reviews)",
-                    //   style: Theme.of(context).textTheme.bodySmall,
-                    // ),
                   ],
                 ),
                 const Divider(),

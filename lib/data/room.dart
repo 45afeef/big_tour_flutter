@@ -81,10 +81,6 @@ class Room {
     };
   }
 
-  String whatsAppMessage() {
-    return "This is the whatsAppMessage";
-  }
-
   launchLocationOnMap() =>
       launchInBrowser(getLocationUrl(location.latitude, location.longitude));
 
