@@ -68,20 +68,28 @@ class PlaceItem extends StatelessWidget {
         aspectRatio: 16 / 9,
         child: ClipRRect(
             borderRadius: const BorderRadius.all(Radius.circular(15)),
-            child: CachedImage(
-              imageUrl: place.imageUrls.elementAt(0),
-              fit: BoxFit.cover,
-            )),
+            child: place.imageUrls.isEmpty
+                ? const SizedBox()
+                : CachedImage(
+                    imageUrl: place.imageUrls.elementAt(0),
+                    fit: BoxFit.cover,
+                  )),
       ),
     );
     Widget titleAndDescription = Expanded(
         child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text(place.name, style: Theme.of(context).textTheme.headline6),
-        Text(place.description, style: Theme.of(context).textTheme.bodyText1),
+        Text(place.name, style: Theme.of(context).textTheme.titleLarge),
+        Text(place.description, style: Theme.of(context).textTheme.bodyMedium),
       ],
     ));
+    Widget shareButton = IconButton(
+        onPressed: place.share,
+        icon: const Icon(
+          Icons.share,
+          color: Colors.pink,
+        ));
 
     return InkWell(
       onLongPress: isAdmin
@@ -95,12 +103,18 @@ class PlaceItem extends StatelessWidget {
           color: Colors.deepOrange[50],
         ),
         padding: const EdgeInsets.all(10.0),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Stack(
+          alignment: Alignment.bottomRight,
           children: [
-            ...(align == Align.right
-                ? [image, const SizedBox(width: 10), titleAndDescription]
-                : [titleAndDescription, const SizedBox(width: 10), image])
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ...(align == Align.right
+                    ? [image, const SizedBox(width: 10), titleAndDescription]
+                    : [titleAndDescription, const SizedBox(width: 10), image])
+              ],
+            ),
+            shareButton
           ],
         ),
       ),

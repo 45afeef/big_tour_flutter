@@ -1,3 +1,6 @@
+import 'package:share_plus/share_plus.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+
 class Place {
   final String id;
   final String name;
@@ -30,5 +33,20 @@ class Place {
       'description': description,
       'imageUrls': imageUrls,
     };
+  }
+
+  share() async {
+    List<XFile> xFiles = [];
+
+    for (var url in imageUrls) {
+      var file = await DefaultCacheManager().getSingleFile(url);
+      xFiles.add(XFile(file.path));
+    }
+
+    Share.shareXFiles(
+      xFiles,
+      subject: name,
+      text: description,
+    );
   }
 }
