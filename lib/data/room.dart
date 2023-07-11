@@ -46,9 +46,11 @@ class Room {
       description: data.get('description'),
       phoneNumbers: [...data.get('phoneNumbers')],
       location: CustomBigooitLocation.fromMap(data.get('location')),
-      // Convert back the array of activity ids into set of activities
+      // Convert back the array of activities into set of activities
       activities: {
-        ...data.get('activities').map((id) => ActivityType.getType(id))
+        ...data
+            .get('activities')
+            .map((value) => ActivityType.getTypeByValue(value))
       },
       images: [...data.get('images')],
       rating: data.get('rating'),
@@ -66,8 +68,8 @@ class Room {
       'description': description,
       'phoneNumbers': phoneNumbers,
       'location': location.toMap(),
-      // Convert the set of activities into its array of activity ids
-      'activities': [...activities.map((e) => e.id)],
+      // Convert the set of activities into array of activitys
+      'activities': [...activities.map((e) => e.value)],
       'images': images,
       'rating': rating,
       'isAvailable': isAvailable,

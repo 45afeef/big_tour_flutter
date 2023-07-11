@@ -19,8 +19,8 @@ enum ActivityType {
   final String value;
   final String imagePath;
 
-  static ActivityType getTypeByValue(String title) =>
-      ActivityType.values.firstWhere((activity) => activity.value == title);
+  static ActivityType getTypeByValue(String value) =>
+      ActivityType.values.firstWhere((activity) => activity.value == value);
   static ActivityType getType(int id) =>
       ActivityType.values.firstWhere((activity) => activity.id == id);
   static String getValue(int id) =>
