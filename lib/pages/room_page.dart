@@ -1,6 +1,5 @@
 import 'package:big_tour/data/room.dart';
 import 'package:big_tour/general/global_variable.dart';
-import 'package:big_tour/helpers/comon.dart';
 import 'package:big_tour/widgets/activity_list.dart';
 import 'package:big_tour/pages/room_details_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -69,6 +68,37 @@ class RoomItem extends StatelessWidget {
                     transitionDuration: const Duration(seconds: 1)),
               )
             }),
+        onLongPress: isAdmin
+            ? () => showDialog(
+                context: context,
+                builder: (_) => AlertDialog(
+                      content: const Text(
+                          "You can either edit or delete the room here"),
+                      actions: [
+                        TextButton(
+                            onPressed: () => {
+                                  Navigator.pop(context),
+                                  FirebaseFirestore.instance
+                                      .collection('rooms')
+                                      .doc(room.id)
+                                      .delete()
+                                },
+                            child: const Text("Delete")),
+                        TextButton(
+                            onPressed: () => {
+                                  Navigator.pop(context),
+                                  showDialog(
+                                    context: context,
+                                    builder: (_) => RoomForm(room: room),
+                                  )
+                                },
+                            child: const Text("Edit")),
+                        ElevatedButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: const Text("Cancel and Go Back"))
+                      ],
+                    ))
+            : null,
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 15),
           child: Row(
@@ -111,14 +141,10 @@ class RoomItem extends StatelessWidget {
                         ),
                         IconButton(
                           icon: const Icon(
-                            Icons.favorite_outline,
+                            Icons.share,
                             color: Colors.pink,
                           ),
-                          onPressed: () => {
-                            // TODO: add the favorite functionality
-                            showToast(context,
-                                "This function is not added yet. We will add it soon")
-                          },
+                          onPressed: room.share,
                         )
                       ],
                     ),
@@ -174,35 +200,6 @@ class RoomItem extends StatelessWidget {
             ],
           ),
         ),
-        onLongPress: () => showDialog(
-            context: context,
-            builder: (_) => AlertDialog(
-                  content:
-                      const Text("You can either edit or delete the room here"),
-                  actions: [
-                    TextButton(
-                        onPressed: () => {
-                              Navigator.pop(context),
-                              FirebaseFirestore.instance
-                                  .collection('rooms')
-                                  .doc(room.id)
-                                  .delete()
-                            },
-                        child: const Text("Delete")),
-                    TextButton(
-                        onPressed: () => {
-                              Navigator.pop(context),
-                              showDialog(
-                                context: context,
-                                builder: (_) => RoomForm(room: room),
-                              )
-                            },
-                        child: const Text("Edit")),
-                    ElevatedButton(
-                        onPressed: () => Navigator.pop(context),
-                        child: const Text("Cancel and Go Back"))
-                  ],
-                )),
       ),
     );
   }
@@ -425,7 +422,7 @@ class _RoomFormState extends State<RoomForm> {
                   keyboardType: TextInputType.number,
                   controller: longitudeController,
                   decoration: const InputDecoration(
-                      hintText: 'Longitude starts with 17'),
+                      hintText: 'Longitude starts with 7'),
                   validator: (String? value) {
                     return (value == null || value.isEmpty)
                         ? 'Please enter your Longitude'

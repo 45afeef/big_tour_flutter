@@ -6,6 +6,8 @@ import 'package:firebase_ui_firestore/firebase_ui_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../widgets/cached_image.dart';
+
 class PlacesPage extends StatelessWidget {
   const PlacesPage({super.key});
 
@@ -66,8 +68,8 @@ class PlaceItem extends StatelessWidget {
         aspectRatio: 16 / 9,
         child: ClipRRect(
             borderRadius: const BorderRadius.all(Radius.circular(15)),
-            child: Image.network(
-              place.imageUrls.elementAt(0),
+            child: CachedImage(
+              imageUrl: place.imageUrls.elementAt(0),
               fit: BoxFit.cover,
             )),
       ),
@@ -82,8 +84,10 @@ class PlaceItem extends StatelessWidget {
     ));
 
     return InkWell(
-      onLongPress: () =>
-          showDialog(context: context, builder: (_) => PlaceForm(place: place)),
+      onLongPress: isAdmin
+          ? () => showDialog(
+              context: context, builder: (_) => PlaceForm(place: place))
+          : null,
       child: Container(
         margin: const EdgeInsets.all(10),
         decoration: BoxDecoration(

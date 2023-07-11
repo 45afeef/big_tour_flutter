@@ -24,10 +24,10 @@ Future<List<XFile>> selectImages() async {
 
 
 // This function takes 3 arguments 
-// 1. a list of XFile, which is typically reference to Image file in the device, which is also a return of imagePicker.pickMuliImage() function.
-// 2. a path in the firebase cloud storage that is to be saved 
-// 3. a name for the image, which assumes to be unique
-// This function will return a list of download url for the supplied images to upload.
+/// 1. a list of XFile [imageFiles], which is typically reference to Image file in the device, which is also a return of imagePicker.pickMuliImage() function.
+/// 2. a [path] in the firebase cloud storage that is to be saved 
+/// 3. a [name] for the image, which assumes to be unique
+/// This function will return a list of download url for the supplied images to upload.
 // We are also appending microsecondsSinceEpoch to image name, so we can assume that all the images have a totally unique path and reference in the cloud storage, and they are never overriten
 Future<List<String>> uploadImages(
   List<XFile> imageFiles,
