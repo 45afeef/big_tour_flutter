@@ -1,3 +1,6 @@
+import 'package:big_tour/pages/trip_list_page.dart';
+import 'package:big_tour/pages/zoomable.dart';
+
 import 'room_page.dart';
 import 'package:flutter/material.dart';
 import 'places_page.dart';
@@ -16,6 +19,13 @@ class ChooseYourNeed extends StatelessWidget {
             padding: EdgeInsets.all(20.0),
             child: Text('What do you want ?'),
           ),
+          ImagedButton(
+              onPressed: () => {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => const TripsListPage())),
+                  },
+              text: "Trips",
+              url: "https://cdn-icons-png.flaticon.com/512/1257/1257385.png"),
           ImagedButton(
               onPressed: () => {
                     Navigator.of(context).push(MaterialPageRoute(
