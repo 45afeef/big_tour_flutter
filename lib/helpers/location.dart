@@ -17,3 +17,12 @@ String decimalDegreesToDMS(double? decimalDegree) {
 
   return "$degree%C2%B0$minute'$second%22";
 }
+
+// This function will help to create an exact google map url from coordinates
+Uri getLocationUrl(double latitude, double longitude) {
+  String pinnedPlaceLink =
+      "https://www.google.com/maps/place/${decimalDegreesToDMS(latitude)}N+${decimalDegreesToDMS(longitude)}E";
+  String morePreciseWithZoom = "/@$latitude,$longitude,18z/";
+
+  return Uri.parse("$pinnedPlaceLink$morePreciseWithZoom");
+}

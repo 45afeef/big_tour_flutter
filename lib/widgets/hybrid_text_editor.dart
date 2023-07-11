@@ -8,6 +8,8 @@ class HybridTextEditor extends StatefulWidget {
     this.text,
     this.hintText = "Enter here",
     this.style,
+    this.minLines,
+    this.maxLines,
     this.keyboardType,
     this.inputFormatters,
     this.onSaved,
@@ -17,6 +19,8 @@ class HybridTextEditor extends StatefulWidget {
   final String? text;
   final String hintText;
   final TextStyle? style;
+  final int? minLines;
+  final int? maxLines;
   final TextInputType? keyboardType;
   final List<TextInputFormatter>? inputFormatters;
   final String? Function(String? value)? validator;
@@ -53,6 +57,8 @@ class _HybridTextEditorState extends State<HybridTextEditor> {
             inputFormatters: widget.inputFormatters,
             keyboardType: widget.keyboardType,
             onSaved: widget.onSaved,
+            minLines: widget.minLines,
+            maxLines: widget.maxLines,
             validator: widget.validator ??
                 (String? value) {
                   return (value == null || value.isEmpty)

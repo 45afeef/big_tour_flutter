@@ -1,7 +1,6 @@
 import 'package:big_tour/data/room.dart';
 import 'package:big_tour/general/global_variable.dart';
 import 'package:big_tour/helpers/comon.dart';
-import 'package:big_tour/helpers/location.dart';
 import 'package:big_tour/helpers/url_lancher.dart';
 import 'package:big_tour/pages/gallary.dart';
 import 'package:big_tour/widgets/activity_list.dart';
@@ -9,9 +8,7 @@ import 'package:big_tour/widgets/hybrid_text_editor.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:location/location.dart';
-import 'package:share_plus/share_plus.dart';
 
 import '../helpers/firebase.dart';
 
@@ -86,8 +83,8 @@ class RoomDetailsPage extends StatelessWidget {
                           ? room.phoneNumbers.elementAt(0)
                           : "7558009733")
                     },
-                    child: Row(
-                      children: const [
+                    child: const Row(
+                      children: [
                         Icon(Icons.call),
                         Text("Call to book now"),
                       ],
@@ -99,29 +96,9 @@ class RoomDetailsPage extends StatelessWidget {
                       backgroundColor: MaterialStateProperty.all<Color>(
                           const Color(0xff00a884)),
                     ),
-                    onPressed: () async {
-                      List<XFile> xFiles = [];
-
-                      for (var url in room.images) {
-                        var file =
-                            await DefaultCacheManager().getSingleFile(url);
-                        xFiles.add(XFile(file.path));
-                      }
-
-                      String activites = "";
-                      for (var act in room.activities) {
-                        activites += '${act.value}, ';
-                      }
-
-                      Share.shareXFiles(
-                        xFiles,
-                        subject: room.name,
-                        text:
-                            '*${room.name}* \n\n${room.description} \n\n *Facilities* \n$activites',
-                      );
-                    },
-                    child: Row(
-                      children: const [
+                    onPressed: room.share,
+                    child: const Row(
+                      children: [
                         Icon(Icons.send),
                         Text("WhatsApp"),
                       ],
@@ -195,11 +172,11 @@ class RoomDetailsPage extends StatelessWidget {
                 Row(
                   children: [
                     InkWell(
-                      onTap: (() => {
-                            showToast(
-                                context, "Searching for current location"),
-                            _getLocation()
-                          }),
+                      onTap: room.launchLocationOnMap,
+                      onLongPress: () => {
+                        showToast(context, "Searching for current location"),
+                        isAdmin && _getLocation()
+                      },
                       child: const Icon(
                         Icons.location_on,
                         color: Colors.amber,
@@ -259,9 +236,12 @@ class RoomDetailsPage extends StatelessWidget {
                   tag: 'description-${room.id}',
                   child: HybridTextEditor(
                     text: room.description,
+                    minLines: 5,
+                    maxLines: 15,
                     style: Theme.of(context).textTheme.bodyText1,
                     onSaved: (newDescription) =>
                         room.description = newDescription!,
+                    keyboardType: TextInputType.multiline,
                   ),
                 ),
                 const SizedBox(height: 200),
@@ -308,14 +288,6 @@ class RoomDetailsPage extends StatelessWidget {
     room.location.latitude = latitude;
     room.location.longitude = longitude;
 
-    _getLocationUrl(latitude, longitude);
-  }
-
-  _getLocationUrl(double latitude, double longitude) {
-    String pinnedPlaceLink =
-        "https://www.google.com/maps/place/${decimalDegreesToDMS(latitude)}N+${decimalDegreesToDMS(longitude)}E";
-    String morePreciseWithZoom = "/@$latitude,$longitude,18z/";
-
-    launchInBrowser(Uri.parse("$pinnedPlaceLink$morePreciseWithZoom"));
+    room.launchLocationOnMap();
   }
 }
