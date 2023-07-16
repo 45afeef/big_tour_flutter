@@ -15,6 +15,7 @@ class PlacesPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("Places in Wayanad")),
+      backgroundColor: Colors.grey[300],
       body: Center(
         child: FirestoreListView<Place>(
           query: FirebaseFirestore.instance
@@ -61,66 +62,68 @@ class PlaceItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onLongPress: isAdmin
-          ? () => showDialog(
-              context: context, builder: (_) => PlaceForm(place: place))
-          : null,
-      child: Container(
-        margin: const EdgeInsets.all(10),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(radius),
-          color: Colors.grey[200],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Place Images comes here
-            AspectRatio(
-              aspectRatio: 16 / 9,
-              child: ClipRRect(
-                borderRadius: BorderRadius.vertical(top: radius),
-                child: place.imageUrls.isEmpty
-                    ? const SizedBox()
-                    : CachedImage(
-                        imageUrl: place.imageUrls.elementAt(0),
-                        fit: BoxFit.cover,
-                      ),
-              ),
+    final Widget placeCard = Container(
+      margin: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.all(radius),
+        color: Colors.white,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Place Images comes here
+          AspectRatio(
+            aspectRatio: 16 / 9,
+            child: ClipRRect(
+              borderRadius: BorderRadius.vertical(top: radius),
+              child: place.imageUrls.isEmpty
+                  ? const SizedBox()
+                  : CachedImage(
+                      imageUrl: place.imageUrls.elementAt(0),
+                      fit: BoxFit.cover,
+                    ),
             ),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      // Place Name comes here
-                      Text(place.name,
-                          style: Theme.of(context).textTheme.titleLarge),
-                      // Share button comes here
-                      IconButton(
-                        onPressed: place.share,
-                        icon: const Icon(
-                          Icons.share,
-                          color: Colors.pink,
-                        ),
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    // Place Name comes here
+                    Text(place.name,
+                        style: Theme.of(context).textTheme.titleLarge),
+                    // Share button comes here
+                    IconButton(
+                      onPressed: place.share,
+                      icon: const Icon(
+                        Icons.share,
+                        color: Colors.pink,
                       ),
-                    ],
-                  ),
-                  // Place Description comes here
-                  Text(
-                    place.description,
-                    style: Theme.of(context).textTheme.bodyMedium,
-                    textAlign: TextAlign.justify,
-                  ),
-                ],
-              ),
+                    ),
+                  ],
+                ),
+                // Place Description comes here
+                Text(
+                  place.description,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                  textAlign: TextAlign.justify,
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
+
+    return isAdmin
+        ? InkWell(
+            onLongPress: () => showDialog(
+                context: context, builder: (_) => PlaceForm(place: place)),
+            child: placeCard,
+          )
+        : placeCard;
   }
 }
 
