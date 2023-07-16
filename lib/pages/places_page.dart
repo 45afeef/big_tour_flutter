@@ -31,7 +31,6 @@ class PlacesPage extends StatelessWidget {
             Place place = snapshot.data();
             return PlaceItem(
               place: place,
-              align: Align.right,
             );
           },
         ),
@@ -55,42 +54,13 @@ class PlaceItem extends StatelessWidget {
   const PlaceItem({
     Key? key,
     required this.place,
-    this.align = Align.left,
   }) : super(key: key);
 
   final Place place;
-  final Align align;
+  final Radius radius = const Radius.circular(15);
 
   @override
   Widget build(BuildContext context) {
-    Widget image = Expanded(
-      child: AspectRatio(
-        aspectRatio: 16 / 9,
-        child: ClipRRect(
-            borderRadius: const BorderRadius.all(Radius.circular(15)),
-            child: place.imageUrls.isEmpty
-                ? const SizedBox()
-                : CachedImage(
-                    imageUrl: place.imageUrls.elementAt(0),
-                    fit: BoxFit.cover,
-                  )),
-      ),
-    );
-    Widget titleAndDescription = Expanded(
-        child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Text(place.name, style: Theme.of(context).textTheme.titleLarge),
-        Text(place.description, style: Theme.of(context).textTheme.bodyMedium),
-      ],
-    ));
-    Widget shareButton = IconButton(
-        onPressed: place.share,
-        icon: const Icon(
-          Icons.share,
-          color: Colors.pink,
-        ));
-
     return InkWell(
       onLongPress: isAdmin
           ? () => showDialog(
@@ -99,22 +69,54 @@ class PlaceItem extends StatelessWidget {
       child: Container(
         margin: const EdgeInsets.all(10),
         decoration: BoxDecoration(
-          borderRadius: const BorderRadius.all(Radius.circular(15)),
-          color: Colors.deepOrange[50],
+          borderRadius: BorderRadius.all(radius),
+          color: Colors.grey[200],
         ),
-        padding: const EdgeInsets.all(10.0),
-        child: Stack(
-          alignment: Alignment.bottomRight,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ...(align == Align.right
-                    ? [image, const SizedBox(width: 10), titleAndDescription]
-                    : [titleAndDescription, const SizedBox(width: 10), image])
-              ],
+            // Place Images comes here
+            AspectRatio(
+              aspectRatio: 16 / 9,
+              child: ClipRRect(
+                borderRadius: BorderRadius.vertical(top: radius),
+                child: place.imageUrls.isEmpty
+                    ? const SizedBox()
+                    : CachedImage(
+                        imageUrl: place.imageUrls.elementAt(0),
+                        fit: BoxFit.cover,
+                      ),
+              ),
             ),
-            shareButton
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      // Place Name comes here
+                      Text(place.name,
+                          style: Theme.of(context).textTheme.titleLarge),
+                      // Share button comes here
+                      IconButton(
+                        onPressed: place.share,
+                        icon: const Icon(
+                          Icons.share,
+                          color: Colors.pink,
+                        ),
+                      ),
+                    ],
+                  ),
+                  // Place Description comes here
+                  Text(
+                    place.description,
+                    style: Theme.of(context).textTheme.bodyMedium,
+                    textAlign: TextAlign.justify,
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),

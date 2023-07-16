@@ -1,5 +1,4 @@
 import 'package:big_tour/pages/trip_list_page.dart';
-import 'package:big_tour/pages/zoomable.dart';
 
 import 'room_page.dart';
 import 'package:flutter/material.dart';
