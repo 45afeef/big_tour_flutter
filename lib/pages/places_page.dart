@@ -4,6 +4,7 @@ import 'package:big_tour/helpers/firebase.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_ui_firestore/firebase_ui_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../widgets/cached_image.dart';
@@ -78,9 +79,15 @@ class PlaceItem extends StatelessWidget {
               borderRadius: BorderRadius.vertical(top: radius),
               child: place.imageUrls.isEmpty
                   ? const SizedBox()
-                  : CachedImage(
-                      imageUrl: place.imageUrls.elementAt(0),
-                      fit: BoxFit.cover,
+                  : ImageSlideshow(
+                      autoPlayInterval: 6000,
+                      isLoop: true,
+                      children: place.imageUrls
+                          .map((url) => CachedImage(
+                                imageUrl: url,
+                                fit: BoxFit.cover,
+                              ))
+                          .toList(),
                     ),
             ),
           ),
