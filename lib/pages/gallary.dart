@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:big_tour/general/global_variable.dart';
 import 'package:big_tour/widgets/cached_image.dart';
 import 'package:big_tour/widgets/image_list.dart';
@@ -61,15 +59,20 @@ class _GallaryState extends State<Gallary> {
               : imageView,
         ),
         Positioned(
+            width: MediaQuery.of(context).size.width,
             bottom: widget.bottomPosition,
             child: Hero(
               tag: 'imageList',
-              child: ImageList(
-                widget.images.sublist(0, min(5, widget.images.length)),
-                onSelect: (selectedIndex) => {
-                  setState(() => currentImage = widget.images[selectedIndex])
-                },
-                addNewImage: widget.addNewImage,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: ImageList(
+                  widget.images,
+                  onSelect: (selectedIndex) => {
+                    setState(() => currentImage = widget.images[selectedIndex])
+                  },
+                  addNewImage: widget.addNewImage,
+                ),
               ),
             ))
       ],

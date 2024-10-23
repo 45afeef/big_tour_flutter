@@ -1,7 +1,7 @@
 import 'package:big_tour/data/room.dart';
 import 'package:big_tour/general/global_variable.dart';
-import 'package:big_tour/widgets/activity_list.dart';
 import 'package:big_tour/pages/room_details_page.dart';
+import 'package:big_tour/widgets/activity_list.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_ui_firestore/firebase_ui_firestore.dart';
 import 'package:flutter/material.dart';
@@ -82,6 +82,7 @@ class RoomItem extends StatelessWidget {
                                       .collection('rooms')
                                       .doc(room.id)
                                       .delete()
+                                  // TOOD - delete the uploaded images as well
                                 },
                             child: const Text("Delete")),
                         TextButton(
@@ -135,7 +136,9 @@ class RoomItem extends StatelessWidget {
                                 style: Theme.of(context).textTheme.bodySmall,
                               ),
                               Text(room.name,
-                                  style: Theme.of(context).textTheme.headlineMedium),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headlineMedium),
                             ],
                           ),
                         ),

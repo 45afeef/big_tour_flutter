@@ -119,8 +119,8 @@ class RoomDetailsPage extends StatelessWidget {
                   onLongPress: ((selectedImageUrl) => showDialog(
                       context: context,
                       builder: (_) => AlertDialog(
-                            content: const Text(
-                                "You can either edit or delete the room here"),
+                            content:
+                                const Text("Do you want to delete this image?"),
                             actions: [
                               TextButton(
                                   onPressed: () => {

@@ -39,8 +39,8 @@ class _ImageListState extends State<ImageList> {
               GestureDetector(
                 onTap: (() => _setSelected(i)),
                 child: Card(
-                  margin: const EdgeInsets.all(0),
-                  shape: RoundedRectangleBorder( 
+                  margin: const EdgeInsets.symmetric(horizontal: 5),
+                  shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15)),
                   elevation: 3,
                   color:
