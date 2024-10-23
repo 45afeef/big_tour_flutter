@@ -19,6 +19,7 @@ class PlacesPage extends StatelessWidget {
       backgroundColor: Colors.grey[300],
       body: Center(
         child: FirestoreListView<Place>(
+          padding: const EdgeInsets.only(bottom: 150),
           query: FirebaseFirestore.instance
               .collection('places')
               .orderBy('name')
@@ -52,91 +53,100 @@ class PlacesPage extends StatelessWidget {
   }
 }
 
-class PlaceItem extends StatelessWidget {
-  const PlaceItem({
-    Key? key,
-    required this.place,
-  }) : super(key: key);
-
+class PlaceItem extends StatefulWidget {
+  const PlaceItem({Key? key, required this.place}) : super(key: key);
   final Place place;
-  final Radius radius = const Radius.circular(15);
+
+  @override
+  _PlaceItemState createState() => _PlaceItemState();
+}
+
+class _PlaceItemState extends State<PlaceItem> {
+  bool isExpanded = false;
 
   @override
   Widget build(BuildContext context) {
-    final Widget placeCard = Container(
-      margin: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.all(radius),
-        color: Colors.white,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Place Images comes here
-          AspectRatio(
-            aspectRatio: 16 / 9,
-            child: ClipRRect(
-              borderRadius: BorderRadius.vertical(top: radius),
-              child: place.imageUrls.isEmpty
-                  ? const SizedBox()
-                  : ImageSlideshow(
-                      autoPlayInterval: 6000,
-                      isLoop: true,
-                      children: place.imageUrls
-                          .map((url) => CachedImage(
-                                imageUrl: url,
-                                fit: BoxFit.cover,
-                              ))
-                          .toList(),
-                    ),
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-            child: Column(
+    return InkWell(
+      onTap: () => setState(() {
+        isExpanded = !isExpanded;
+      }),
+      child: Container(
+        margin: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(15),
+          color: Colors.white,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    // Place Name comes here
-                    Text(place.name,
-                        style: Theme.of(context).textTheme.titleLarge),
-                    // Share button comes here
-                    IconButton(
-                      onPressed: place.share,
-                      icon: const Icon(
-                        Icons.share,
-                        color: Colors.pink,
-                      ),
-                    ),
-                  ],
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(15),
+                  child: Image.network(
+                    widget.place.imageUrls.isNotEmpty
+                        ? widget.place.imageUrls.first
+                        : 'https://via.placeholder.com/150',
+                    width: 50,
+                    height: 50,
+                    fit: BoxFit.cover,
+                  ),
                 ),
-                // Place Description comes here
-                Text(
-                  place.description,
-                  style: Theme.of(context).textTheme.bodyMedium,
-                  textAlign: TextAlign.justify,
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    widget.place.name,
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                ),
+                IconButton(
+                  onPressed: widget.place.share,
+                  icon: const Icon(
+                    Icons.share,
+                    color: Colors.pink,
+                  ),
                 ),
               ],
             ),
-          ),
-        ],
+            if (isExpanded)
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (widget.place.imageUrls.isNotEmpty)
+                      AspectRatio(
+                        aspectRatio: 16 / 9,
+                        child: ClipRRect(
+                          borderRadius: const BorderRadius.vertical(
+                              top: Radius.circular(15)),
+                          child: ImageSlideshow(
+                            autoPlayInterval: 6000,
+                            isLoop: true,
+                            children: widget.place.imageUrls
+                                .map((url) => CachedImage(
+                                      imageUrl: url,
+                                      fit: BoxFit.cover,
+                                    ))
+                                .toList(),
+                          ),
+                        ),
+                      ),
+                    const SizedBox(height: 10),
+                    Text(
+                      widget.place.description,
+                      style: Theme.of(context).textTheme.bodyMedium,
+                      textAlign: TextAlign.justify,
+                    ),
+                  ],
+                ),
+              ),
+          ],
+        ),
       ),
     );
-
-    return isAdmin
-        ? InkWell(
-            onLongPress: () => showDialog(
-                context: context, builder: (_) => PlaceForm(place: place)),
-            child: placeCard,
-          )
-        : placeCard;
   }
-}
-
-enum Align {
-  right,
-  left,
 }
 
 class PlaceForm extends StatefulWidget {
@@ -149,7 +159,7 @@ class PlaceForm extends StatefulWidget {
 }
 
 class _PlaceFormState extends State<PlaceForm> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   late TextEditingController nameController;
   late TextEditingController descriptionController;
@@ -185,45 +195,28 @@ class _PlaceFormState extends State<PlaceForm> {
         ElevatedButton(
           onPressed: () async {
             // Validate the form. This will make use of individual validation declared in every input field
-            if (_formKey.currentState!.validate()) {
+            if (formKey.currentState!.validate()) {
               // Close the Alertdialog way before starting the upload process
               Navigator.pop(context);
 
               // Time to save to firebase
 
               // save a new place
-              if (widget.place == null) {
-                // Trigger image selection if not yet selected
-                // then getn the image download urls as list in imageUrls variable
-                List<String> imageUrls = await uploadImages(
-                    imageFiles.isEmpty ? await selectImages() : imageFiles,
-                    'places',
-                    nameController.text);
-
-                // Now time to save everything into firestore database
-                saveToFireStore(Place(
+              FirebaseFirestore.instance
+                  .collection("places")
+                  .doc(widget.place?.id)
+                  .set(Place(
                     name: nameController.text,
                     description: descriptionController.text,
-                    imageUrls: imageUrls));
-              }
-              // save an edit to the existiong place
-              else {
-                FirebaseFirestore.instance
-                    .collection("places")
-                    .doc(widget.place?.id)
-                    .set(Place(
-                      name: nameController.text,
-                      description: descriptionController.text,
-                      imageUrls: [...?widget.place?.imageUrls],
-                    ).toFirestore());
-              }
+                    imageUrls: [...?widget.place?.imageUrls],
+                  ).toFirestore());
             }
           },
           child: Text(widget.place == null ? 'Add new Place' : 'Save Edit'),
         ),
       ],
       content: Form(
-        key: _formKey,
+        key: formKey,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -253,7 +246,7 @@ class _PlaceFormState extends State<PlaceForm> {
             widget.place == null
                 ? ElevatedButton(
                     onPressed: () async {
-                      if (_formKey.currentState!.validate()) {
+                      if (formKey.currentState!.validate()) {
                         imageFiles = await selectImages();
                       }
                     },

@@ -1,5 +1,5 @@
-import 'package:share_plus/share_plus.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:share_plus/share_plus.dart';
 
 class Place {
   final String id;
@@ -43,10 +43,10 @@ class Place {
       xFiles.add(XFile(file.path));
     }
 
+    Share.share('*$name* \n\n$description');
     Share.shareXFiles(
       xFiles,
       subject: name,
-      text: description,
     );
   }
 }

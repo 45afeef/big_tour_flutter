@@ -1,7 +1,7 @@
 import 'package:big_tour/helpers/location.dart';
 import 'package:big_tour/widgets/activity_list.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../helpers/url_lancher.dart';
 
@@ -95,15 +95,9 @@ class Room {
     for (var act in activities) {
       activites += '${act.value}, ';
     }
-
-    Uri locationUri = getLocationUrl(location.latitude, location.longitude);
     
-    Share.shareXFiles(
-      xFiles,
-      subject: name,
-      text:
-          '*$name* \n\n$description \n\n*Facilities* \n\n$activites \n\n$locationUri',
-    );
+    Share.shareXFiles(xFiles,subject: name);
+    Share.share('*$name* \n\n$description \n\n*Facilities* \n\n$activites \n');
   }
 }
 
