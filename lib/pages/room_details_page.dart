@@ -93,7 +93,7 @@ class RoomDetailsPage extends StatelessWidget {
                   // Share the details of the room by whatsApp
                   ElevatedButton(
                     style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all<Color>(
+                      backgroundColor: WidgetStateProperty.all<Color>(
                           const Color(0xff00a884)),
                     ),
                     onPressed: room.share,
@@ -166,7 +166,7 @@ class RoomDetailsPage extends StatelessWidget {
                 ),
                 HybridTextEditor(
                   text: room.name,
-                  style: Theme.of(context).textTheme.headline2,
+                  style: Theme.of(context).textTheme.headlineMedium,
                   onSaved: (newName) => room.name = newName!,
                 ),
                 Row(
@@ -214,7 +214,7 @@ class RoomDetailsPage extends StatelessWidget {
                 const Divider(),
                 const SizedBox(height: 20),
                 Text("Activities",
-                    style: Theme.of(context).textTheme.headline6),
+                    style: Theme.of(context).textTheme.headlineLarge),
                 Hero(
                   tag: 'activity-${room.id}',
                   child: Activities(
@@ -227,14 +227,14 @@ class RoomDetailsPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 20),
                 Text("Description",
-                    style: Theme.of(context).textTheme.headline6),
+                    style: Theme.of(context).textTheme.headlineMedium),
                 Hero(
                   tag: 'description-${room.id}',
                   child: HybridTextEditor(
                     text: room.description,
                     minLines: 5,
                     maxLines: 15,
-                    style: Theme.of(context).textTheme.bodyText1,
+                    style: Theme.of(context).textTheme.bodyMedium,
                     onSaved: (newDescription) =>
                         room.description = newDescription!,
                     keyboardType: TextInputType.multiline,

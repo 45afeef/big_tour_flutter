@@ -28,7 +28,7 @@ enum ActivityType {
 }
 
 class Activities extends StatefulWidget {
-  Activities({
+  const Activities({
     Key? key,
     required this.size,
     required this.activities,
@@ -37,7 +37,7 @@ class Activities extends StatefulWidget {
   }) : super(key: key);
 
   final double size;
-  Set<ActivityType> activities;
+  final Set<ActivityType> activities;
   final void Function(
     bool changeType, // true for adding and false for removing
     ActivityType activityType,
@@ -127,10 +127,10 @@ class _ActivitiesState extends State<Activities> {
                                 PopupMenuItem(value: e, child: Text(e.value)))
                       ];
                     },
-                    onSelected: (value) => setState(() => {
-                          widget.activities.add(value),
+                    onSelected: (value) => setState(() {
+                          widget.activities.add(value);
                           widget.onChangeActivity!(
-                              true, value, widget.activities),
+                              true, value, widget.activities);
                         }),
                   ),
                 )

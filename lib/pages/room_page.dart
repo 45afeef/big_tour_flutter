@@ -135,7 +135,7 @@ class RoomItem extends StatelessWidget {
                                 style: Theme.of(context).textTheme.bodySmall,
                               ),
                               Text(room.name,
-                                  style: Theme.of(context).textTheme.headline6),
+                                  style: Theme.of(context).textTheme.headlineMedium),
                             ],
                           ),
                         ),
