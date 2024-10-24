@@ -1,7 +1,8 @@
 import 'package:big_tour/general/global_variable.dart';
-import 'package:big_tour/widgets/cached_image.dart';
-import 'package:big_tour/widgets/image_list.dart';
 import "package:flutter/material.dart";
+
+import '../widgets/cached_image.dart';
+import '../widgets/image_list.dart';
 
 class Gallary extends StatefulWidget {
   const Gallary(
@@ -26,20 +27,41 @@ class Gallary extends StatefulWidget {
 }
 
 class _GallaryState extends State<Gallary> {
-  String currentImage = "";
-  @override
-  initState() {
-    super.initState();
-    currentImage = widget.images.first;
+  final PageController _controller = PageController();
+
+  int currentIndex = 0;
+  BoxFit imageFit = BoxFit.cover;
+
+  void _onPageChanged(int index) {
+    setState(() {
+      currentIndex = index;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     Widget imageView = GestureDetector(
-      onTap: widget.onTap ?? () => Navigator.pop(context),
-      onLongPress: isAdmin ? () => widget.onLongPress!(currentImage) : null,
-      child: CachedImage(
-        imageUrl: currentImage,
+      onTap: widget.onTap ??
+          () => setState(() {
+                if (imageFit == BoxFit.cover) {
+                  imageFit = BoxFit.contain;
+                } else {
+                  imageFit = BoxFit.cover;
+                }
+              }),
+      onLongPress: isAdmin
+          ? () => widget.onLongPress!(widget.images[currentIndex])
+          : null,
+      child: PageView.builder(
+        controller: _controller,
+        itemCount: widget.images.length,
+        onPageChanged: _onPageChanged,
+        itemBuilder: (context, index) {
+          return CachedImage(
+            imageUrl: widget.images[index],
+            fit: imageFit,
+          );
+        },
       ),
     );
 
@@ -59,22 +81,21 @@ class _GallaryState extends State<Gallary> {
               : imageView,
         ),
         Positioned(
-            width: MediaQuery.of(context).size.width,
-            bottom: widget.bottomPosition,
-            child: Hero(
-              tag: 'imageList',
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: ImageList(
-                  widget.images,
-                  onSelect: (selectedIndex) => {
-                    setState(() => currentImage = widget.images[selectedIndex])
-                  },
-                  addNewImage: widget.addNewImage,
-                ),
+          width: MediaQuery.of(context).size.width,
+          bottom: widget.bottomPosition,
+          child: Hero(
+            tag: 'imageList',
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: ImageList(
+                widget.images,
+                onSelect: (i) => _controller.jumpToPage(i),
+                addNewImage: widget.addNewImage,
               ),
-            ))
+            ),
+          ),
+        )
       ],
     );
   }

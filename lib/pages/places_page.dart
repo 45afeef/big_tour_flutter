@@ -118,19 +118,15 @@ class _PlaceItemState extends State<PlaceItem> {
                     if (widget.place.imageUrls.isNotEmpty)
                       AspectRatio(
                         aspectRatio: 16 / 9,
-                        child: ClipRRect(
-                          borderRadius: const BorderRadius.vertical(
-                              top: Radius.circular(15)),
-                          child: ImageSlideshow(
-                            autoPlayInterval: 6000,
-                            isLoop: true,
-                            children: widget.place.imageUrls
-                                .map((url) => CachedImage(
-                                      imageUrl: url,
-                                      fit: BoxFit.cover,
-                                    ))
-                                .toList(),
-                          ),
+                        child: ImageSlideshow(
+                          autoPlayInterval: 6000,
+                          isLoop: true,
+                          children: widget.place.imageUrls
+                              .map((url) => CachedImage(
+                                    imageUrl: url,
+                                    fit: BoxFit.cover,
+                                  ))
+                              .toList(),
                         ),
                       ),
                     const SizedBox(height: 10),

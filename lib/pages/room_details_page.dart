@@ -132,7 +132,7 @@ class _RoomDetailsPageState extends State<RoomDetailsPage> {
               children: [
                 Gallary(
                   widget.room.images,
-                  bottomPosition: -15,
+                  bottomPosition: -25,
                   isSquare: true,
                   onLongPress: ((selectedImageUrl) => showDialog(
                       context: context,
@@ -162,8 +162,10 @@ class _RoomDetailsPageState extends State<RoomDetailsPage> {
                   onTap: () => {
                     Navigator.of(context).push(
                       PageRouteBuilder(
-                        pageBuilder: (_, __, ___) =>
-                            Gallary(widget.room.images),
+                        pageBuilder: (_, __, ___) => Gallary(
+                          widget.room.images,
+                          
+                        ),
                         transitionDuration: const Duration(seconds: 1),
                       ),
                     )
@@ -181,7 +183,7 @@ class _RoomDetailsPageState extends State<RoomDetailsPage> {
                   },
                 ),
                 const SizedBox(
-                  height: 20,
+                  height: 30,
                 ),
                 HybridTextEditor(
                   isEditable: canEdit,
