@@ -12,7 +12,7 @@ import 'package:location/location.dart';
 
 import '../helpers/firebase.dart';
 
-class RoomDetailsPage extends StatelessWidget {
+class RoomDetailsPage extends StatefulWidget {
   const RoomDetailsPage(
     this.room, {
     super.key,
@@ -21,8 +21,16 @@ class RoomDetailsPage extends StatelessWidget {
   final Room room;
 
   @override
+  State<RoomDetailsPage> createState() => _RoomDetailsPageState();
+}
+
+class _RoomDetailsPageState extends State<RoomDetailsPage> {
+  bool canEdit = false;
+
+  @override
   Widget build(BuildContext context) {
     final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
     return Form(
       key: formKey,
       child: Scaffold(
@@ -31,17 +39,26 @@ class RoomDetailsPage extends StatelessWidget {
               ? FloatingActionButton(
                   tooltip: 'Save room in cloud',
                   onPressed: (() {
-                    if (formKey.currentState!.validate()) {
-                      showToast(context, "I will add this soon");
-                      formKey.currentState?.save();
-                      FirebaseFirestore.instance
-                          .collection("rooms")
-                          .doc(room.id)
-                          .set(room.toFirestore())
-                          .whenComplete(() => Navigator.pop(context));
+                    if (canEdit) {
+                      if (formKey.currentState!.validate()) {
+                        showToast(context, "I will add this soon");
+                        formKey.currentState!.save();
+                        FirebaseFirestore.instance
+                            .collection("rooms")
+                            .doc(widget.room.id)
+                            .set(widget.room.toFirestore());
+                        Navigator.pop(context);
+                      } else {
+                        showToast(
+                            context, 'Not saved because of one or more errors');
+                      }
+                    } else {
+                      setState(() {
+                        canEdit = true;
+                      });
                     }
                   }),
-                  child: const Icon(Icons.upload),
+                  child: Icon(canEdit ? Icons.save : Icons.edit),
                 )
               : const SizedBox(),
           bottomSheet: BottomSheet(
@@ -59,11 +76,12 @@ class RoomDetailsPage extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         HybridTextEditor(
-                          text: "${isAdmin ? "" : "₹"}${room.price}",
+                          isEditable: canEdit,
+                          text: "${canEdit ? "" : "₹"}${widget.room.price}",
                           style: const TextStyle(fontWeight: FontWeight.bold),
                           keyboardType: TextInputType.number,
                           onSaved: (newPrice) =>
-                              room.price = int.parse(newPrice!),
+                              widget.room.price = int.parse(newPrice!),
                           inputFormatters: <TextInputFormatter>[
                             FilteringTextInputFormatter.digitsOnly,
                           ], // Only numbers can be entered
@@ -79,8 +97,8 @@ class RoomDetailsPage extends StatelessWidget {
                   // If the app is using by user, let them call us
                   ElevatedButton(
                     onPressed: () => {
-                      makePhoneCall(isAdmin
-                          ? room.phoneNumbers.elementAt(0)
+                      makePhoneCall(canEdit
+                          ? widget.room.phoneNumbers.elementAt(0)
                           : "7558009733")
                     },
                     child: const Row(
@@ -96,7 +114,7 @@ class RoomDetailsPage extends StatelessWidget {
                       backgroundColor: WidgetStateProperty.all<Color>(
                           const Color(0xff00a884)),
                     ),
-                    onPressed: room.share,
+                    onPressed: widget.room.share,
                     child: const Row(
                       children: [
                         Icon(Icons.send),
@@ -113,7 +131,7 @@ class RoomDetailsPage extends StatelessWidget {
             child: ListView(
               children: [
                 Gallary(
-                  room.images,
+                  widget.room.images,
                   bottomPosition: -15,
                   isSquare: true,
                   onLongPress: ((selectedImageUrl) => showDialog(
@@ -128,7 +146,7 @@ class RoomDetailsPage extends StatelessWidget {
                                         // Delete the selected image from image list that is stored in firestore
                                         FirebaseFirestore.instance
                                             .collection("rooms")
-                                            .doc(room.id)
+                                            .doc(widget.room.id)
                                             .update({
                                           "images": FieldValue.arrayRemove(
                                               [selectedImageUrl])
@@ -144,7 +162,8 @@ class RoomDetailsPage extends StatelessWidget {
                   onTap: () => {
                     Navigator.of(context).push(
                       PageRouteBuilder(
-                        pageBuilder: (_, __, ___) => Gallary(room.images),
+                        pageBuilder: (_, __, ___) =>
+                            Gallary(widget.room.images),
                         transitionDuration: const Duration(seconds: 1),
                       ),
                     )
@@ -153,11 +172,11 @@ class RoomDetailsPage extends StatelessWidget {
                     List<String> imageUrls = await uploadImages(
                       await selectImages(),
                       'rooms',
-                      room.name,
+                      widget.room.name,
                     );
                     FirebaseFirestore.instance
                         .collection("rooms")
-                        .doc(room.id)
+                        .doc(widget.room.id)
                         .update({"images": FieldValue.arrayUnion(imageUrls)});
                   },
                 ),
@@ -165,17 +184,18 @@ class RoomDetailsPage extends StatelessWidget {
                   height: 20,
                 ),
                 HybridTextEditor(
-                  text: room.name,
+                  isEditable: canEdit,
+                  text: widget.room.name,
                   style: Theme.of(context).textTheme.headlineMedium,
-                  onSaved: (newName) => room.name = newName!,
+                  onSaved: (newName) => widget.room.name = newName!,
                 ),
                 Row(
                   children: [
                     InkWell(
-                      onTap: room.launchLocationOnMap,
+                      onTap: widget.room.launchLocationOnMap,
                       onLongPress: () => {
                         showToast(context, "Searching for current location"),
-                        isAdmin && _getLocation()
+                        canEdit && _getLocation()
                       },
                       child: const Icon(
                         Icons.location_on,
@@ -185,10 +205,11 @@ class RoomDetailsPage extends StatelessWidget {
                     SizedBox(
                       width: 100,
                       child: HybridTextEditor(
-                        text: room.location.name,
+                        isEditable: canEdit,
+                        text: widget.room.location.name,
                         style: Theme.of(context).textTheme.bodySmall,
                         onSaved: (newLocationName) =>
-                            room.location.name = newLocationName!,
+                            widget.room.location.name = newLocationName!,
                       ),
                     ),
                     const Spacer(),
@@ -199,11 +220,13 @@ class RoomDetailsPage extends StatelessWidget {
                     SizedBox(
                       width: 30,
                       child: HybridTextEditor(
-                        text: room.rating.toString(), //"4.7(9k reviews)",
+                        isEditable: canEdit,
+                        text:
+                            widget.room.rating.toString(), //"4.7(9k reviews)",
                         style: Theme.of(context).textTheme.bodySmall,
                         keyboardType: TextInputType.number,
                         onSaved: (newRating) =>
-                            room.rating = double.parse(newRating!),
+                            widget.room.rating = double.parse(newRating!),
                         inputFormatters: <TextInputFormatter>[
                           FilteringTextInputFormatter.allow(RegExp(r'[\d.]'))
                         ],
@@ -216,27 +239,28 @@ class RoomDetailsPage extends StatelessWidget {
                 Text("Activities",
                     style: Theme.of(context).textTheme.headlineLarge),
                 Hero(
-                  tag: 'activity-${room.id}',
+                  tag: 'activity-${widget.room.id}',
                   child: Activities(
                     size: 60,
-                    activities: room.activities,
+                    activities: widget.room.activities,
                     onChangeActivity: (_, __, allActivities) =>
-                        room.activities = allActivities,
-                    isEditable: isAdmin,
+                        widget.room.activities = allActivities,
+                    isEditable: canEdit,
                   ),
                 ),
                 const SizedBox(height: 20),
                 Text("Description",
                     style: Theme.of(context).textTheme.headlineMedium),
                 Hero(
-                  tag: 'description-${room.id}',
+                  tag: 'description-${widget.room.id}',
                   child: HybridTextEditor(
-                    text: room.description,
+                    isEditable: canEdit,
+                    text: widget.room.description,
                     minLines: 5,
                     maxLines: 15,
                     style: Theme.of(context).textTheme.bodyMedium,
                     onSaved: (newDescription) =>
-                        room.description = newDescription!,
+                        widget.room.description = newDescription!,
                     keyboardType: TextInputType.multiline,
                   ),
                 ),
@@ -281,9 +305,9 @@ class RoomDetailsPage extends StatelessWidget {
     double latitude = locationData.latitude!;
     double longitude = locationData.longitude!;
 
-    room.location.latitude = latitude;
-    room.location.longitude = longitude;
+    widget.room.location.latitude = latitude;
+    widget.room.location.longitude = longitude;
 
-    room.launchLocationOnMap();
+    widget.room.launchLocationOnMap();
   }
 }

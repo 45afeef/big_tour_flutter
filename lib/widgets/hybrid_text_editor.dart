@@ -1,4 +1,3 @@
-import 'package:big_tour/general/global_variable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -14,6 +13,7 @@ class HybridTextEditor extends StatefulWidget {
     this.inputFormatters,
     this.onSaved,
     this.validator,
+    this.isEditable = false,
   }) : super(key: key);
 
   final String? text;
@@ -25,6 +25,7 @@ class HybridTextEditor extends StatefulWidget {
   final List<TextInputFormatter>? inputFormatters;
   final String? Function(String? value)? validator;
   final void Function(String? value)? onSaved;
+  final bool isEditable;
 
   @override
   State<HybridTextEditor> createState() => _HybridTextEditorState();
@@ -49,7 +50,7 @@ class _HybridTextEditorState extends State<HybridTextEditor> {
 
   @override
   Widget build(BuildContext context) {
-    return isAdmin
+    return widget.isEditable
         ? TextFormField(
             controller: _controller,
             decoration: InputDecoration(hintText: widget.hintText),

@@ -30,6 +30,7 @@ class RoomPage extends StatelessWidget {
           : const SizedBox(),
       body: Center(
         child: FirestoreListView<Room>(
+          padding: const EdgeInsets.only(top: 50, bottom: 150),
           query: FirebaseFirestore.instance
               .collection('rooms')
               .where("isAvailable", isEqualTo: true)
