@@ -10,13 +10,47 @@ import 'package:image_picker/image_picker.dart';
 import '../helpers/firebase.dart';
 import '../widgets/cached_image.dart';
 
-class RoomPage extends StatelessWidget {
+enum RoomItemViewType {
+  nameOnly,
+  full,
+}
+
+class RoomPage extends StatefulWidget {
   const RoomPage({super.key});
+
+  @override
+  State<RoomPage> createState() => _RoomPageState();
+}
+
+class _RoomPageState extends State<RoomPage> {
+  RoomItemViewType _viewType = RoomItemViewType.full;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Rooms in wayanad")),
+      appBar: AppBar(
+        title: const Text("Rooms in wayanad"),
+        actions: [
+          IconButton(
+            onPressed: () {
+              setState(() {
+                switch (_viewType) {
+                  case RoomItemViewType.full:
+                    _viewType = RoomItemViewType.nameOnly;
+                    break;
+                  case RoomItemViewType.nameOnly:
+                  default:
+                    _viewType = RoomItemViewType.full;
+                    break;
+                }
+              });
+            },
+            icon: Icon(_viewType == RoomItemViewType.full
+                ? Icons.list
+                : Icons.view_list),
+          )
+        ],
+      ),
       floatingActionButton: isAdmin
           ? FloatingActionButton(
               tooltip: 'Add new room',
@@ -42,9 +76,45 @@ class RoomPage extends StatelessWidget {
               const Text("Error on Loading, check internet or wait some time"),
           itemBuilder: (ctx, snapshot) {
             Room room = snapshot.data();
-            return RoomItem(room);
+
+            switch (_viewType) {
+              case RoomItemViewType.nameOnly:
+                return RoomNameOnlyWidget(room);
+              case RoomItemViewType.full:
+              default:
+                return RoomItem(room);
+            }
           },
         ),
+      ),
+    );
+  }
+}
+
+class RoomNameOnlyWidget extends StatelessWidget {
+  const RoomNameOnlyWidget(this.room, {super.key});
+
+  final Room room;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      onTap: (() => Navigator.of(context).push(
+            PageRouteBuilder(
+                pageBuilder: (_, __, ___) => RoomDetailsPage(room),
+                transitionDuration: const Duration(seconds: 1)),
+          )),
+      title: Text(room.name),
+      subtitle: Text(
+        room.location.name,
+        style: const TextStyle(color: Colors.black38, fontSize: 11),
+      ),
+      trailing: IconButton(
+        icon: const Icon(
+          Icons.share,
+          color: Colors.pink,
+        ),
+        onPressed: room.share,
       ),
     );
   }
