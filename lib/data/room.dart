@@ -1,11 +1,18 @@
+import 'package:big_tour/helpers/location.dart';
+import 'package:big_tour/widgets/activity_list.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:share_plus/share_plus.dart';
+
+import '../helpers/url_lancher.dart';
+
 class Room {
   final String id;
   String name;
-  double price;
+  int price;
   String description;
   List<String> phoneNumbers;
-  String locationName;
-  List<String> facilities;
+  CustomBigooitLocation location;
+  Set<ActivityType> activities;
   List<String> images;
   double? rating;
   bool isAvailable;
@@ -16,8 +23,8 @@ class Room {
     required this.price,
     required this.description,
     required this.phoneNumbers,
-    required this.locationName,
-    required this.facilities,
+    required this.location,
+    required this.activities,
     required this.images,
     this.isAvailable = true,
     this.rating,
@@ -30,8 +37,8 @@ class Room {
         price: 0,
         description: "",
         phoneNumbers: [],
-        locationName: "",
-        facilities: [],
+        location: CustomBigooitLocation.empty(),
+        activities: {},
         images: []);
   }
 
@@ -43,8 +50,13 @@ class Room {
       price: data.get('price'),
       description: data.get('description'),
       phoneNumbers: [...data.get('phoneNumbers')],
-      locationName: data.get('locationName'),
-      facilities: [...data.get('facilities')],
+      location: CustomBigooitLocation.fromMap(data.get('location')),
+      // Convert back the array of activities into set of activities
+      activities: {
+        ...data
+            .get('activities')
+            .map((value) => ActivityType.getTypeByValue(value))
+      },
       images: [...data.get('images')],
       rating: data.get('rating'),
       isAvailable: data.get('isAvailable'),
@@ -60,11 +72,57 @@ class Room {
       'price': price,
       'description': description,
       'phoneNumbers': phoneNumbers,
-      'locationName': locationName,
-      'facilities': facilities,
+      'location': location.toMap(),
+      // Convert the set of activities into array of activitys
+      'activities': [...activities.map((e) => e.value)],
       'images': images,
       'rating': rating,
       'isAvailable': isAvailable,
+    };
+  }
+
+  launchLocationOnMap() =>
+      launchInBrowser(getLocationUrl(location.latitude, location.longitude));
+
+  share() async {
+    List<XFile> xFiles = [];
+
+    for (var url in images) {
+      var file = await DefaultCacheManager().getSingleFile(url);
+      xFiles.add(XFile(file.path));
+    }
+    String activites = "";
+    for (var act in activities) {
+      activites += '${act.value}, ';
+    }
+    
+    Share.shareXFiles(xFiles,subject: name);
+    Share.share('*$name* \n\n$description \n\n*Facilities* \n\n$activites \n');
+  }
+}
+
+class CustomBigooitLocation {
+  String name;
+  double latitude;
+  double longitude;
+
+  CustomBigooitLocation(this.name, this.latitude, this.longitude);
+
+  factory CustomBigooitLocation.empty() => CustomBigooitLocation("", 0, 0);
+
+  factory CustomBigooitLocation.fromMap(Map<String, dynamic> datamap) {
+    return CustomBigooitLocation(
+      datamap["name"],
+      datamap["latitude"],
+      datamap["longitude"],
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'name': name,
+      'latitude': latitude,
+      'longitude': longitude,
     };
   }
 }

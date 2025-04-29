@@ -1,10 +1,13 @@
 import 'package:big_tour/data/place.dart';
+import 'package:big_tour/general/global_variable.dart';
 import 'package:big_tour/helpers/firebase.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_ui_firestore/firebase_ui_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
 import 'package:image_picker/image_picker.dart';
+
+import '../widgets/cached_image.dart';
 
 class PlacesPage extends StatelessWidget {
   const PlacesPage({super.key});
@@ -13,8 +16,10 @@ class PlacesPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("Places in Wayanad")),
+      backgroundColor: Colors.grey[300],
       body: Center(
         child: FirestoreListView<Place>(
+          padding: const EdgeInsets.only(bottom: 150),
           query: FirebaseFirestore.instance
               .collection('places')
               .orderBy('name')
@@ -29,85 +34,115 @@ class PlacesPage extends StatelessWidget {
             Place place = snapshot.data();
             return PlaceItem(
               place: place,
-              align: Align.right,
             );
           },
         ),
       ),
-      floatingActionButton:
-          FirebaseAuth.instance.currentUser?.phoneNumber == "+917558009733"
-              ? FloatingActionButton(
-                  onPressed: () => showDialog(
-                    barrierDismissible: false,
-                    context: context,
-                    builder: (_) => const PlaceForm(),
-                  ),
-                  tooltip: 'Add new place',
-                  child: const Icon(Icons.add_location_alt_outlined),
-                )
-              : const SizedBox(),
+      floatingActionButton: isAdmin
+          ? FloatingActionButton(
+              onPressed: () => showDialog(
+                barrierDismissible: false,
+                context: context,
+                builder: (_) => const PlaceForm(),
+              ),
+              tooltip: 'Add new place',
+              child: const Icon(Icons.add_location_alt_outlined),
+            )
+          : const SizedBox(),
     );
   }
 }
 
-class PlaceItem extends StatelessWidget {
-  const PlaceItem({
-    Key? key,
-    required this.place,
-    this.align = Align.left,
-  }) : super(key: key);
-
+class PlaceItem extends StatefulWidget {
+  const PlaceItem({Key? key, required this.place}) : super(key: key);
   final Place place;
-  final Align align;
+
+  @override
+  _PlaceItemState createState() => _PlaceItemState();
+}
+
+class _PlaceItemState extends State<PlaceItem> {
+  bool isExpanded = false;
 
   @override
   Widget build(BuildContext context) {
-    Widget image = Expanded(
-      child: AspectRatio(
-        aspectRatio: 16 / 9,
-        child: ClipRRect(
-            borderRadius: const BorderRadius.all(Radius.circular(15)),
-            child: Image.network(
-              place.imageUrls.elementAt(0),
-              fit: BoxFit.cover,
-            )),
-      ),
-    );
-    Widget titleAndDescription = Expanded(
-        child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Text(place.name, style: Theme.of(context).textTheme.headline6),
-        Text(place.description, style: Theme.of(context).textTheme.bodyText1),
-      ],
-    ));
-
     return InkWell(
-      onLongPress: () =>
-          showDialog(context: context, builder: (_) => PlaceForm(place: place)),
+      onTap: () => setState(() {
+        isExpanded = !isExpanded;
+      }),
       child: Container(
         margin: const EdgeInsets.all(10),
         decoration: BoxDecoration(
-          borderRadius: const BorderRadius.all(Radius.circular(15)),
-          color: Colors.deepOrange[50],
+          borderRadius: BorderRadius.circular(15),
+          color: Colors.white,
         ),
-        padding: const EdgeInsets.all(10.0),
-        child: Row(
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ...(align == Align.right
-                ? [image, const SizedBox(width: 10), titleAndDescription]
-                : [titleAndDescription, const SizedBox(width: 10), image])
+            Row(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(15),
+                  child: Image.network(
+                    widget.place.imageUrls.isNotEmpty
+                        ? widget.place.imageUrls.first
+                        : 'https://via.placeholder.com/150',
+                    width: 50,
+                    height: 50,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    widget.place.name,
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                ),
+                IconButton(
+                  onPressed: widget.place.share,
+                  icon: const Icon(
+                    Icons.share,
+                    color: Colors.pink,
+                  ),
+                ),
+              ],
+            ),
+            if (isExpanded)
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (widget.place.imageUrls.isNotEmpty)
+                      AspectRatio(
+                        aspectRatio: 16 / 9,
+                        child: ImageSlideshow(
+                          autoPlayInterval: 6000,
+                          isLoop: true,
+                          children: widget.place.imageUrls
+                              .map((url) => CachedImage(
+                                    imageUrl: url,
+                                    fit: BoxFit.cover,
+                                  ))
+                              .toList(),
+                        ),
+                      ),
+                    const SizedBox(height: 10),
+                    Text(
+                      widget.place.description,
+                      style: Theme.of(context).textTheme.bodyMedium,
+                      textAlign: TextAlign.justify,
+                    ),
+                  ],
+                ),
+              ),
           ],
         ),
       ),
     );
   }
-}
-
-enum Align {
-  right,
-  left,
 }
 
 class PlaceForm extends StatefulWidget {
@@ -120,7 +155,7 @@ class PlaceForm extends StatefulWidget {
 }
 
 class _PlaceFormState extends State<PlaceForm> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   late TextEditingController nameController;
   late TextEditingController descriptionController;
@@ -155,47 +190,29 @@ class _PlaceFormState extends State<PlaceForm> {
             child: const Text("Cancel")),
         ElevatedButton(
           onPressed: () async {
-            // Validate will return true if the form is valid, or false if
-            // the form is invalid.
-            if (_formKey.currentState!.validate()) {
+            // Validate the form. This will make use of individual validation declared in every input field
+            if (formKey.currentState!.validate()) {
               // Close the Alertdialog way before starting the upload process
               Navigator.pop(context);
 
               // Time to save to firebase
 
               // save a new place
-              if (widget.place == null) {
-                // Trigger image selection if not yet selected
-                // then getn the image download urls as list in imageUrls variable
-                List<String> imageUrls = await uploadImages(
-                    imageFiles.isEmpty ? await selectImages() : imageFiles,
-                    'places',
-                    nameController.text);
-
-                // Now time to save everything into firestore database
-                saveToFireStore(Place(
+              FirebaseFirestore.instance
+                  .collection("places")
+                  .doc(widget.place?.id)
+                  .set(Place(
                     name: nameController.text,
                     description: descriptionController.text,
-                    imageUrls: imageUrls));
-              }
-              // save an edit to the existiong place
-              else {
-                FirebaseFirestore.instance
-                    .collection("places")
-                    .doc(widget.place?.id)
-                    .set(Place(
-                      name: nameController.text,
-                      description: descriptionController.text,
-                      imageUrls: [...?widget.place?.imageUrls],
-                    ).toFirestore());
-              }
+                    imageUrls: [...?widget.place?.imageUrls],
+                  ).toFirestore());
             }
           },
           child: Text(widget.place == null ? 'Add new Place' : 'Save Edit'),
         ),
       ],
       content: Form(
-        key: _formKey,
+        key: formKey,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -220,10 +237,12 @@ class _PlaceFormState extends State<PlaceForm> {
                     : null;
               },
             ),
+            // show "Select Images" button only if there is no already selected images are available
+            // whcih means the "Select Images" button will show only while creating room and not while editing
             widget.place == null
                 ? ElevatedButton(
                     onPressed: () async {
-                      if (_formKey.currentState!.validate()) {
+                      if (formKey.currentState!.validate()) {
                         imageFiles = await selectImages();
                       }
                     },

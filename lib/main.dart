@@ -2,8 +2,8 @@ import 'package:big_tour/firebase_options.dart';
 import 'package:big_tour/pages/choose_your_need.dart';
 import 'package:big_tour/providers/place_model.dart';
 import 'package:big_tour/providers/room_model.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart' hide PhoneAuthProvider;
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -47,11 +47,11 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.pink,
         textTheme: TextTheme(
-            headline1: TextStyle(
+            headlineMedium: TextStyle(
                 color: Colors.deepPurple[600],
                 fontSize: 16.0,
                 fontWeight: FontWeight.bold),
-            bodyText1: const TextStyle(
+            bodyMedium: const TextStyle(
                 color: Colors.black45, fontWeight: FontWeight.normal)),
       ),
       home: const MyHomePage(title: 'Bigooit Tour'),

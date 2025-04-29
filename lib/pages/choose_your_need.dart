@@ -1,6 +1,9 @@
-import 'room_page.dart';
+import 'package:big_tour/pages/trip_list_page.dart';
 import 'package:flutter/material.dart';
+
+import '../widgets/imaged_button.dart';
 import 'places_page.dart';
+import 'room_page.dart';
 
 class ChooseYourNeed extends StatelessWidget {
   const ChooseYourNeed({super.key});
@@ -10,12 +13,19 @@ class ChooseYourNeed extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[
           const Padding(
             padding: EdgeInsets.all(20.0),
             child: Text('What do you want ?'),
           ),
+          ImagedButton(
+              onPressed: () => {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => const TripsListPage())),
+                  },
+              text: "Trips",
+              url: "https://cdn-icons-png.flaticon.com/512/1257/1257385.png"),
           ImagedButton(
               onPressed: () => {
                     Navigator.of(context).push(MaterialPageRoute(
@@ -37,31 +47,5 @@ class ChooseYourNeed extends StatelessWidget {
         ],
       ),
     );
-  }
-}
-
-class ImagedButton extends StatelessWidget {
-  const ImagedButton({
-    Key? key,
-    required this.text,
-    required this.onPressed,
-    required this.url,
-  }) : super(key: key);
-
-  final String text;
-  final String url;
-  final Function() onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            IconButton(
-                icon: Image.network(url), onPressed: onPressed, iconSize: 50),
-            TextButton(onPressed: onPressed, child: Text(text)),
-          ],
-        ));
   }
 }
