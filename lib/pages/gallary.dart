@@ -1,6 +1,6 @@
-import 'package:big_tour/general/global_variable.dart';
 import "package:flutter/material.dart";
 
+import '/general/global_variable.dart';
 import '../widgets/cached_image.dart';
 import '../widgets/image_list.dart';
 

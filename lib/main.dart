@@ -1,13 +1,13 @@
-import 'package:big_tour/firebase_options.dart';
-import 'package:big_tour/pages/choose_your_need.dart';
-import 'package:big_tour/providers/place_model.dart';
-import 'package:big_tour/providers/room_model.dart';
 import 'package:firebase_auth/firebase_auth.dart' hide PhoneAuthProvider;
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '/firebase_options.dart';
+import '/pages/choose_your_need.dart';
+import '/providers/place_model.dart';
+import '/providers/room_model.dart';
 import 'helpers/url_lancher.dart';
 
 void main() async {
@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Bigooit Tour',
+      title: 'Map Your Trip',
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -54,14 +54,12 @@ class MyApp extends StatelessWidget {
             bodyMedium: const TextStyle(
                 color: Colors.black45, fontWeight: FontWeight.normal)),
       ),
-      home: const MyHomePage(title: 'Bigooit Tour'),
+      home: const MyHomePage(title: 'Map Your Trip'),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
   // how it looks.
@@ -73,25 +71,13 @@ class MyHomePage extends StatefulWidget {
 
   final String title;
 
+  const MyHomePage({super.key, required this.title});
+
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  @override
-  void initState() {
-    super.initState();
-
-    _loadDataFromServer();
-  }
-
-  _loadDataFromServer() {
-    // commenting this as I have started using firebase_ui packages
-    // TODO: needs to learn more about it soon
-    Provider.of<PlaceModel>(context, listen: false); //.fetchPlaces();
-    Provider.of<RoomModel>(context, listen: false); //.fetchPlaces();
-  }
-
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -120,5 +106,19 @@ class _MyHomePageState extends State<MyHomePage> {
               child: const Icon(Icons.call),
             ),
           );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    _loadDataFromServer();
+  }
+
+  _loadDataFromServer() {
+    // commenting this as I have started using firebase_ui packages
+    // TODO: needs to learn more about it soon
+    Provider.of<PlaceModel>(context, listen: false); //.fetchPlaces();
+    Provider.of<RoomModel>(context, listen: false); //.fetchPlaces();
   }
 }

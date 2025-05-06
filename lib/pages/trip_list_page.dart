@@ -1,10 +1,10 @@
-import 'package:big_tour/helpers/firebase.dart';
-import 'package:big_tour/widgets/cached_image.dart';
-import 'package:share_plus/share_plus.dart';
-import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:share_plus/share_plus.dart';
 
+import '/helpers/firebase.dart';
+import '/widgets/cached_image.dart';
 import '../general/global_variable.dart';
 
 class TripsListPage extends StatefulWidget {
@@ -16,31 +16,6 @@ class TripsListPage extends StatefulWidget {
 
 class _TripsListPageState extends State<TripsListPage> {
   static List<String> tripsImagesUrlList = [];
-
-  void getFirebaseImageFolder() {
-    final Reference storageRef =
-        FirebaseStorage.instance.ref().child('Gallery').child('TripMaps');
-
-    storageRef.listAll().then((result) async {
-      List<String> allUrls = [];
-      for (Reference i in result.items) {
-        String url = await i.getDownloadURL();
-
-        allUrls.add(url);
-      }
-
-      setState(() {
-        tripsImagesUrlList = allUrls;
-      });
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-
-    getFirebaseImageFolder();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -76,5 +51,30 @@ class _TripsListPageState extends State<TripsListPage> {
             )
           : null,
     );
+  }
+
+  void getFirebaseImageFolder() {
+    final Reference storageRef =
+        FirebaseStorage.instance.ref().child('Gallery').child('TripMaps');
+
+    storageRef.listAll().then((result) async {
+      List<String> allUrls = [];
+      for (Reference i in result.items) {
+        String url = await i.getDownloadURL();
+
+        allUrls.add(url);
+      }
+
+      setState(() {
+        tripsImagesUrlList = allUrls;
+      });
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    getFirebaseImageFolder();
   }
 }

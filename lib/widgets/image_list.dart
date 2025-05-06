@@ -1,9 +1,13 @@
-import 'package:big_tour/general/global_variable.dart';
 import 'package:flutter/material.dart';
 
+import '/general/global_variable.dart';
 import 'cached_image.dart';
 
 class ImageList extends StatefulWidget {
+  final List<String> images;
+
+  final Function(int selectionIndex) onSelect;
+  final Function()? addNewImage;
   const ImageList(
     this.images, {
     Key? key,
@@ -11,23 +15,12 @@ class ImageList extends StatefulWidget {
     this.addNewImage,
   }) : super(key: key);
 
-  final List<String> images;
-  final Function(int selectionIndex) onSelect;
-  final Function()? addNewImage;
-
   @override
   State<ImageList> createState() => _ImageListState();
 }
 
 class _ImageListState extends State<ImageList> {
   int _selected = 0;
-
-  void _setSelected(int i) {
-    setState(() {
-      _selected = i;
-      widget.onSelect(_selected);
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -78,5 +71,12 @@ class _ImageListState extends State<ImageList> {
             )
           : const SizedBox(),
     ]);
+  }
+
+  void _setSelected(int i) {
+    setState(() {
+      _selected = i;
+      widget.onSelect(_selected);
+    });
   }
 }

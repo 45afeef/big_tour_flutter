@@ -1,132 +1,31 @@
-import 'package:big_tour/data/room.dart';
-import 'package:big_tour/general/global_variable.dart';
-import 'package:big_tour/pages/room_details_page.dart';
-import 'package:big_tour/widgets/activity_list.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_ui_firestore/firebase_ui_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '/data/room.dart';
+import '/general/global_variable.dart';
+import '/pages/room_details_page.dart';
+import '/widgets/activity_list.dart';
 import '../helpers/firebase.dart';
 import '../widgets/cached_image.dart';
 
-enum RoomItemViewType {
-  nameOnly,
-  full,
-}
+class RoomForm extends StatefulWidget {
+  final Room? room;
 
-class RoomPage extends StatefulWidget {
-  const RoomPage({super.key});
+  const RoomForm({this.room, super.key});
 
   @override
-  State<RoomPage> createState() => _RoomPageState();
-}
-
-class _RoomPageState extends State<RoomPage> {
-  RoomItemViewType _viewType = RoomItemViewType.full;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Rooms in wayanad"),
-        actions: [
-          IconButton(
-            onPressed: () {
-              setState(() {
-                switch (_viewType) {
-                  case RoomItemViewType.full:
-                    _viewType = RoomItemViewType.nameOnly;
-                    break;
-                  case RoomItemViewType.nameOnly:
-                  default:
-                    _viewType = RoomItemViewType.full;
-                    break;
-                }
-              });
-            },
-            icon: Icon(_viewType == RoomItemViewType.full
-                ? Icons.list
-                : Icons.view_list),
-          )
-        ],
-      ),
-      floatingActionButton: isAdmin
-          ? FloatingActionButton(
-              tooltip: 'Add new room',
-              child: const Icon(Icons.add_business_rounded),
-              onPressed: () => showDialog(
-                barrierDismissible: false,
-                context: context,
-                builder: (_) => const RoomForm(),
-              ),
-            )
-          : const SizedBox(),
-      body: Center(
-        child: FirestoreListView<Room>(
-          padding: const EdgeInsets.only(top: 50, bottom: 150),
-          query: FirebaseFirestore.instance
-              .collection('rooms')
-              .where("isAvailable", isEqualTo: true)
-              .withConverter<Room>(
-                fromFirestore: (snapshot, _) => Room.fromFirestore(snapshot),
-                toFirestore: (room, _) => room.toFirestore(),
-              ),
-          errorBuilder: (_, __, ___) =>
-              const Text("Error on Loading, check internet or wait some time"),
-          itemBuilder: (ctx, snapshot) {
-            Room room = snapshot.data();
-
-            switch (_viewType) {
-              case RoomItemViewType.nameOnly:
-                return RoomNameOnlyWidget(room);
-              case RoomItemViewType.full:
-              default:
-                return RoomItem(room);
-            }
-          },
-        ),
-      ),
-    );
-  }
-}
-
-class RoomNameOnlyWidget extends StatelessWidget {
-  const RoomNameOnlyWidget(this.room, {super.key});
-
-  final Room room;
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      onTap: (() => Navigator.of(context).push(
-            PageRouteBuilder(
-                pageBuilder: (_, __, ___) => RoomDetailsPage(room),
-                transitionDuration: const Duration(seconds: 1)),
-          )),
-      title: Text(room.name),
-      subtitle: Text(
-        room.location.name,
-        style: const TextStyle(color: Colors.black38, fontSize: 11),
-      ),
-      trailing: IconButton(
-        icon: const Icon(
-          Icons.share,
-          color: Colors.pink,
-        ),
-        onPressed: room.share,
-      ),
-    );
-  }
+  State<RoomForm> createState() => _RoomFormState();
 }
 
 class RoomItem extends StatelessWidget {
+  final Room room;
+
   const RoomItem(
     this.room, {
     Key? key,
   }) : super(key: key);
-
-  final Room room;
 
   @override
   Widget build(BuildContext context) {
@@ -279,13 +178,45 @@ class RoomItem extends StatelessWidget {
   }
 }
 
-class RoomForm extends StatefulWidget {
-  const RoomForm({this.room, super.key});
+enum RoomItemViewType {
+  nameOnly,
+  full,
+}
 
-  final Room? room;
+class RoomNameOnlyWidget extends StatelessWidget {
+  final Room room;
+
+  const RoomNameOnlyWidget(this.room, {super.key});
 
   @override
-  State<RoomForm> createState() => _RoomFormState();
+  Widget build(BuildContext context) {
+    return ListTile(
+      onTap: (() => Navigator.of(context).push(
+            PageRouteBuilder(
+                pageBuilder: (_, __, ___) => RoomDetailsPage(room),
+                transitionDuration: const Duration(seconds: 1)),
+          )),
+      title: Text(room.name),
+      subtitle: Text(
+        room.location.name,
+        style: const TextStyle(color: Colors.black38, fontSize: 11),
+      ),
+      trailing: IconButton(
+        icon: const Icon(
+          Icons.share,
+          color: Colors.pink,
+        ),
+        onPressed: room.share,
+      ),
+    );
+  }
+}
+
+class RoomPage extends StatefulWidget {
+  const RoomPage({super.key});
+
+  @override
+  State<RoomPage> createState() => _RoomPageState();
 }
 
 class _RoomFormState extends State<RoomForm> {
@@ -301,51 +232,6 @@ class _RoomFormState extends State<RoomForm> {
   late TextEditingController ratingController;
 
   List<XFile> imageFiles = [];
-
-  @override
-  void initState() {
-    super.initState();
-
-    // initialize text editing controllers
-    nameController = TextEditingController(text: widget.room?.name);
-    priceController =
-        TextEditingController(text: widget.room?.price.toString());
-    descriptionController =
-        TextEditingController(text: widget.room?.description);
-    phoneNumbersController =
-        TextEditingController(text: widget.room?.phoneNumbers.first);
-    locationNameController =
-        TextEditingController(text: widget.room?.location.name);
-    latitudeController =
-        TextEditingController(text: widget.room?.location.latitude.toString());
-    longitudeController =
-        TextEditingController(text: widget.room?.location.longitude.toString());
-    ratingController =
-        TextEditingController(text: widget.room?.rating.toString());
-  }
-
-  @override
-  void dispose() {
-    // Clean up the controller when the widget is disposed.
-    nameController.dispose();
-    priceController.dispose();
-    descriptionController.dispose();
-    phoneNumbersController.dispose();
-    locationNameController.dispose();
-    latitudeController.dispose();
-    longitudeController.dispose();
-    ratingController.dispose();
-
-    super.dispose();
-  }
-
-  void _close() {
-    Navigator.pop(context);
-  }
-
-  void _accept() {
-    Navigator.pop(context, true); // dialog returns true
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -530,7 +416,121 @@ class _RoomFormState extends State<RoomForm> {
     );
   }
 
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is disposed.
+    nameController.dispose();
+    priceController.dispose();
+    descriptionController.dispose();
+    phoneNumbersController.dispose();
+    locationNameController.dispose();
+    latitudeController.dispose();
+    longitudeController.dispose();
+    ratingController.dispose();
+
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    // initialize text editing controllers
+    nameController = TextEditingController(text: widget.room?.name);
+    priceController =
+        TextEditingController(text: widget.room?.price.toString());
+    descriptionController =
+        TextEditingController(text: widget.room?.description);
+    phoneNumbersController =
+        TextEditingController(text: widget.room?.phoneNumbers.first);
+    locationNameController =
+        TextEditingController(text: widget.room?.location.name);
+    latitudeController =
+        TextEditingController(text: widget.room?.location.latitude.toString());
+    longitudeController =
+        TextEditingController(text: widget.room?.location.longitude.toString());
+    ratingController =
+        TextEditingController(text: widget.room?.rating.toString());
+  }
+
   void saveToFireStore(Room room) {
     FirebaseFirestore.instance.collection("rooms").add(room.toMap());
+  }
+
+  void _accept() {
+    Navigator.pop(context, true); // dialog returns true
+  }
+
+  void _close() {
+    Navigator.pop(context);
+  }
+}
+
+class _RoomPageState extends State<RoomPage> {
+  RoomItemViewType _viewType = RoomItemViewType.full;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Rooms in wayanad"),
+        actions: [
+          IconButton(
+            onPressed: () {
+              setState(() {
+                switch (_viewType) {
+                  case RoomItemViewType.full:
+                    _viewType = RoomItemViewType.nameOnly;
+                    break;
+                  case RoomItemViewType.nameOnly:
+                  default:
+                    _viewType = RoomItemViewType.full;
+                    break;
+                }
+              });
+            },
+            icon: Icon(_viewType == RoomItemViewType.full
+                ? Icons.list
+                : Icons.view_list),
+          )
+        ],
+      ),
+      floatingActionButton: isAdmin
+          ? FloatingActionButton(
+              tooltip: 'Add new room',
+              child: const Icon(Icons.add_business_rounded),
+              onPressed: () => showDialog(
+                barrierDismissible: false,
+                context: context,
+                builder: (_) => const RoomForm(),
+              ),
+            )
+          : const SizedBox(),
+      body: Center(
+        child: FirestoreListView<Room>(
+          padding: const EdgeInsets.only(top: 50, bottom: 150),
+          query: FirebaseFirestore.instance
+              .collection('rooms')
+              .where("isAvailable", isEqualTo: true)
+              .withConverter<Room>(
+                fromFirestore: (snapshot, _) => Room.fromFirestore(snapshot),
+                toFirestore: (room, _) => room.toFirestore(),
+              ),
+          errorBuilder: (_, __, ___) =>
+              const Text("Error on Loading, check internet or wait some time"),
+          itemBuilder: (ctx, snapshot) {
+            Room room = snapshot.data();
+
+            switch (_viewType) {
+              case RoomItemViewType.nameOnly:
+                return RoomNameOnlyWidget(room);
+              case RoomItemViewType.full:
+              default:
+                return RoomItem(room);
+            }
+          },
+        ),
+      ),
+    );
   }
 }

@@ -1,6 +1,6 @@
-import 'package:big_tour/pages/trip_list_page.dart';
 import 'package:flutter/material.dart';
 
+import '/pages/trip_list_page.dart';
 import '../widgets/imaged_button.dart';
 import 'places_page.dart';
 import 'room_page.dart';

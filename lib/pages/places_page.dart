@@ -1,12 +1,12 @@
-import 'package:big_tour/data/place.dart';
-import 'package:big_tour/general/global_variable.dart';
-import 'package:big_tour/helpers/firebase.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_ui_firestore/firebase_ui_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '/data/place.dart';
+import '/general/global_variable.dart';
+import '/helpers/firebase.dart';
 import '../widgets/cached_image.dart';
 
 class PlacesPage extends StatelessWidget {

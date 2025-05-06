@@ -1,15 +1,15 @@
-import 'package:big_tour/data/room.dart';
-import 'package:big_tour/general/global_variable.dart';
-import 'package:big_tour/helpers/comon.dart';
-import 'package:big_tour/helpers/url_lancher.dart';
-import 'package:big_tour/pages/gallary.dart';
-import 'package:big_tour/widgets/activity_list.dart';
-import 'package:big_tour/widgets/hybrid_text_editor.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:location/location.dart';
 
+import '/data/room.dart';
+import '/general/global_variable.dart';
+import '/helpers/comon.dart';
+import '/helpers/url_lancher.dart';
+import '/pages/gallary.dart';
+import '/widgets/activity_list.dart';
+import '/widgets/hybrid_text_editor.dart';
 import '../helpers/firebase.dart';
 
 class RoomDetailsPage extends StatefulWidget {
@@ -164,7 +164,6 @@ class _RoomDetailsPageState extends State<RoomDetailsPage> {
                       PageRouteBuilder(
                         pageBuilder: (_, __, ___) => Gallary(
                           widget.room.images,
-                          
                         ),
                         transitionDuration: const Duration(seconds: 1),
                       ),

@@ -57,7 +57,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyB3efjKILjoA9IBNdemMm6umJbQqndFd4E',
-    appId: '1:827607336219:android:1f8f58bc9741eae96fbfbe',
+    appId: '1:827607336219:android:9cd9a4531e9b18f96fbfbe',
     messagingSenderId: '827607336219',
     projectId: 'bigooit-tour',
     storageBucket: 'bigooit-tour.appspot.com',
