@@ -86,26 +86,49 @@ class _MyHomePageState extends State<MyHomePage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
-    return FirebaseAuth.instance.currentUser == null
-        ? SignInScreen(
+
+    return StreamBuilder<User?>(
+      stream: FirebaseAuth.instance.authStateChanges(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (!snapshot.hasData) {
+          return SignInScreen(
             providers: [PhoneAuthProvider()],
-            actions: [
-              AuthStateChangeAction<SignedIn>((_, __) => setState(() {}))
-            ],
-          )
-        : Scaffold(
-            appBar: AppBar(
-              // Here we take the value from the MyHomePage object that was created by
-              // the App.build method, and use it to set our appbar title.
-              title: Text(widget.title),
-            ),
-            body: const ChooseYourNeed(),
-            floatingActionButton: FloatingActionButton(
-              onPressed: () => {makePhoneCall("7558009733")},
-              tooltip: 'Call now',
-              child: const Icon(Icons.call),
+          );
+        }
+        if (!snapshot.hasData) {
+          return MaterialApp(
+            theme: ThemeData(
+                colorScheme: ColorScheme.fromSeed(seedColor: Colors.red)),
+            home: SignInScreen(
+              showAuthActionSwitch: false,
+              providers: [PhoneAuthProvider()],
             ),
           );
+        }
+        return Scaffold(
+          appBar: AppBar(
+            title: Text(widget.title),
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.logout),
+                onPressed: () async {
+                  await FirebaseAuth.instance.signOut();
+                },
+              ),
+            ],
+          ),
+          body: const ChooseYourNeed(),
+          floatingActionButton: FloatingActionButton(
+            onPressed: () => makePhoneCall("7558009733"),
+            tooltip: 'Call now',
+            child: const Icon(Icons.call),
+          ),
+        );
+      },
+    );
   }
 
   @override
